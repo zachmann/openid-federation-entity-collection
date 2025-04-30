@@ -1,0 +1,338 @@
+%%%
+title = "OpenID Federation Entity Collection Endpoint 1.0 - draft 00"
+abbrev = "openid-federation-entity-collection"
+ipr = "none"
+workgroup = "individual"
+keyword = ["security", "openid", "federation"]
+
+[seriesInfo]
+name = "Internet-Draft"
+value = "openid-federation-entity-collection"
+status = "standard"
+
+[[author]]
+initials="G.Z."
+surname="Zachmann"
+fullname="Gabriel Zachmann"
+organization="Karlsruhe Institute of Technology"
+    [author.address]
+    email = "gabriel.zachmann@kit.edu"
+    
+%%%
+
+.# Abstract
+
+This specification acts as an extension to the [@!OpenID.Federation]. It defines an additional federation endpoint to retrieve a filterable list of all resolvable entities in a (sub-)federation.
+
+{mainmatter}
+
+# Introduction
+
+TODO
+
+## Requirements Notation and Conventions
+
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP
+14 [@!RFC2119] [@!RFC8174] when, and only when, they appear in all capitals, as shown here.
+
+
+# Terminology
+
+This specification uses the terms
+"Entity" as defined by OpenID Connect Core [@!OpenID.Core],
+"Client" as defined by [@!RFC6749],
+and "Trust Mark", "Federation Entity", "Federation Entity Key", "Trust Anchor",
+"Intermediate", and "Subordinate Statement" defined in [@!OpenID.Federation].
+
+## Endpoint Description
+
+The Federation Entity Collection Endpoint is an optional endpoint that MAY be published by Federation Entities. It MUST use the `https` scheme and MAY include port, path, and query parameter components encoded in `application/x-www-form-urlencoded` format. It MUST NOT contain a fragment component.
+Federation Entities publishing this endpoint SHOULD also publish a
+`federation_resolve_endpoint`.
+
+### Endpoint Location
+
+The location of the Federation Entity Collection Endpoint is published in the `federation_entity` metadata, using the `federation_collection_endpoint` parameter.
+
+The following is a non-normative example of an Entity Configuration payload, for an Trust Anchor that includes the `federation_collection_endpoint`:
+
+```json
+{
+  "iss": "https://ta.example.org",
+  "sub": "https://ta.example.org",
+  "iat": 1590000000,
+  "exp": 1590086400,
+  "jwks": {
+    "keys": [
+      {
+        "kty": "RSA",
+        "kid": "key1",
+        "use": "sig",
+        "n": "n4EPtAOCc9AlkeQHPzHStgAbgs7bTZLwUBZdR8_KuKPEHLd4rHVTeT",
+        "e": "AQAB"
+      }
+    ]
+  },
+  "metadata": {
+    "federation_entity": {
+      "federation_fetch_endpoint": "https://ta.example.org/fetch",
+      "federation_list_endpoint": "https://ta.example.org/list",
+      "federation_resolve_endpoint": "https://ta.example.org/resolve",
+      "federation_collection_endpoint": "https://ta.example.org/entities"
+    }
+  }
+}
+```
+
+## Entity Collection Request
+
+### Request Format
+
+When client authentication is not used, the request to the `federation_collection_endpoint` MUST be an HTTP request using the GET method with the following query parameters, encoded in `application/x-www-form-urlencoded` format:
+
+- **from_entity_id**: (OPTIONAL) If this parameter is present, the resulting list MUST be the subset of the overall ordered response starting from the index of the Entity referenced with this parameter.   
+  If the Entity Identifier in this parameter is not or not longer known to the responder, it MUST use the HTTP status code 404 and the content type `application/json` with the error code `entity_id_not_found`.  
+  If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
+
+- **limit**: (OPTIONAL) Requested number of results included in the response.
+If this parameter is present, the number of results in the returned list MUST NOT be greater than the minimum of the responder’s upper limit and the value of this parameter.
+If this parameter is not present the server MUST fall back on the upper limit.  
+  If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
+  
+- **entity_type**: (OPTIONAL) The value of this parameter is an Entity Type Identifier. The result MUST be filtered to include only those entities that include the specified Entity Type. When multiple `entity_type` parameters are present, for example `entity_type=openid_provider&entity_type=openid_relying_party`, the result MUST be filtered to include all specified Entity Types.  
+If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
+
+- **trust_mark_kind**: (OPTIONAL) The value of this parameter is a Trust Mark Kind. The list in the response is filtered to include only Entities that publish a Trust Mark for this Trust Mark Kind in their Entity Configuration and is verified by the responder. The responder SHOULD verify the Trust Mark using the same Trust Anchor that is used to collect the Entities. When multiple `trust_mark_kind` parameters are present, the result MUST be filtered to include all specified Trust Marks.  
+If the responder does not support this feature, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `unsupported_parameter`.
+
+- **trust_anchor**: (RECOMMENDED) The Trust Anchor that the collection endpoint MUST use when collecting Entities. The value is an Entity Identifier. If omitted, the responder sets this parameter to its own Entity Identifier. If the responder does not have a defined Entity Identifier, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `invalid_request`.
+
+-	**claims**: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
+If this parameter is NOT present it is at the discretion of the responder which claims are included or not.  
+If this parameter is present and it is NOT an empty array, each JSON object that represents an Entity MUST include the requested claims if available.  
+If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `unsupported_parameter`.
+
+
+
+When Client authentication is used, the request MUST be an HTTP request using the POST method, with the parameters passed in the POST body.
+
+#### Example Request
+
+The following is a non-normative example of a collection request:
+
+```http
+GET /collection?entity_type=openid_provider&trust_mark_id=https%3A%2F%2Frp%2Erefeds.org%2Fsitfi&trust_anchor=https%3A%2F%2Fswamid.se HTTP/1.1
+Host: openid.sunet.se
+```
+
+## Entity Collection Response
+
+### Response Format
+
+A successful response MUST use the HTTP status code 200 and the content type `application/json` or `application/entity-collection-response+jwt`. 
+
+The response is either a JSON object as described below or a signed JWT that is explicitly typed by setting the `typ` header parameter to `entity-collection-response+jwt` to prevent cross-JWT confusion. It is signed with a Federation Entity Key and encodes the same JSON object described below.
+
+If the response is negative, it will be a JSON object and the content type MUST be `application/json` and use the errors defined here or in [@!OpenID.Federation].
+
+### Response Claims
+
+The claims in the entity collection response are:
+
+- **entities**: (REQUIRED) Array of JSON objects, each representing an
+Federation Entity using the format described below.
+- **next_entity_id**: (OPTIONAL) Entity Identifier for the next element in the
+result list where the next page begins. This attribute is REQUIRED when
+additional results are available beyond those included in the `entities` array.
+- **last_updated**: (RECOMMENDED) Number. Time when the responder last updated the result list. This is expressed as Seconds Since the Epoch, per [@!RFC7519]. If the `last_updated` time changes between paginated calls, this might be an indication for the client that it might have received outdated information in a previous call. 
+
+Additional claims MAY be defined and used in conjunction with the claims above.
+
+#### Entity Object Parameters
+
+Each JSON Object in the returned `entities` arra MAY contain the following
+claims:
+
+- **entity_id**: (REQUIRED) The Entity Identifier for the subject entity of the
+current record.
+- **entity_types**: (RECOMMENDED) Array of string Entity Type Identifiers. If
+present this claim MUST contain all Entity Type Identifiers of the subject's
+Entity the responder knows about.
+- **logo_uris**: (OPTIONAL) JSON Object representing logo uris for different Entity Types. Each member name of the JSON object is an Entity Type Identifier and each value is the logo uri for that entity type. If the `logo_uri` claim is present for an Entity Type Identifier in the metadata response claim and this claim `logo_uris` is present the value from metadata MUST be equal to the value in this claim.
+- **display_names**: (OPTIONAL) JSON Object representing human readable names for the subject’s Entity according to different Entity Types. Each member name of the JSON object is an Entity Type Identifier and each value is a human readable string presentable to the End-User.  
+This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to the Claim name, delimited by a `#` character.  
+The responder SHOULD use the following mapping between metadata claims and this claim if present in the metadata:
+    - `federation_entity`: TBD, maybe `organization_name`
+    - `openid_relying_party`: `client_name`
+	  - `openid_provider`: TBD
+	  - `oauth_authorization_server`: TBD
+	  - `oauth_client`: `client_name`
+	  - `oauth_resource`: `resource_name`
+- **trust_marks**: (OPTIONAL) Array of objects, each representing a Trust Mark,
+as defined in Section 3 of [@!OpenID.Federation]. Only valid Trust Marks that
+have been verified by the responder MAY appear in the response.
+- **trust_chain**: (OPTIONAL) Array containing the sequence of Entity Statements
+that compose the Trust Chain, starting with the Entity referenced in `entity_id`
+and ending with the selected Trust Anchor, as defined in Section 4 of
+[@!OpenID.Federation].
+- **metadata**: (OPTIONAL) JSON Object containing the resolved subject metdata,
+according to the requested `entity_type` and `trust_anchor`.  
+If this claim is included in the response for any of the Entities, the response
+MUST be a signed JWT as described above and MUST NOT be an unsigned JSON object.
+
+Additional claims MAY be defined and used in conjunction with the claims above.
+
+
+#### Example Response
+
+```json
+{
+  "federation_entities": [
+    {
+      "display_names": {
+        "federation_entity": "The green organization"
+      },
+      "entity_id": "https://green.example.com",
+      "entity_types": [
+        "federation_entity"
+      ],
+      "logo_uris": {
+        "federation_entity": "https://green.example.com/logo.png"
+      }
+    },
+    {
+      "display_names": {
+        "federation_entity": "Red Organization",
+        "openid_relying_party": "Red RP"
+      },
+      "entity_id": "https://red.example.com",
+      "entity_types": [
+        "openid_relying_party",
+        "federation_entity"
+      ],
+      "logo_uris": {
+        "federation_entity": "https://red.example.com/logo.png",
+        "openid_relying_party": "https://red.example.com/logo.png"
+      }
+    },
+    {
+      "entity_id": "https://op.example.com",
+      "entity_types": [
+        "openid_provider"
+      ]
+    }
+  ]
+}
+```
+
+# Privacy Considerations
+
+TODO
+
+# Security Considerations
+
+The security considerations of OpenID Federation 1.0 [@!OpenID.Federation]
+apply to this specification.
+
+{backmatter}
+
+
+<reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 2</title>
+    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author initials="J." surname="Bradley" fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author initials="M." surname="Jones" fullname="Michael B. Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
+      <organization>Google</organization>
+    </author>
+    <author initials="C." surname="Mortimore" fullname="Chuck Mortimore">
+      <organization>Salesforce</organization>
+    </author>
+   <date day="15" month="December" year="2023"/>
+  </front>
+</reference>
+
+<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-federation-1_0.html">
+    <front>
+        <title>OpenID Federation 1.0</title>
+        <author fullname="R. Hedberg, Ed.">
+            <organization>independent</organization>
+        </author>
+        <author fullname="Michael B. Jones">
+            <organization>Self-Issued Consulting</organization>
+        </author>
+        <author fullname="A. Solberg">
+            <organization>Sikt</organization>
+        </author>
+        <author fullname="John Bradley">
+            <organization>Yubico</organization>
+        </author>
+        <author fullname="Giuseppe De Marco">
+            <organization>independent</organization>
+        </author>
+        <author fullname="Vladimir Dzhuvinov">
+            <organization>Connect2id</organization>
+        </author>
+        <date day="24" month="October" year="2024"/>
+    </front>
+</reference>
+
+# Notices
+
+Copyright (c) 2025 The OpenID Foundation.
+
+The OpenID Foundation (OIDF) grants to any Contributor, developer,
+implementer, or other interested party a non-exclusive, royalty free,
+worldwide copyright license to reproduce, prepare derivative works from,
+distribute, perform and display, this Implementers Draft, Final
+Specification, or Final Specification Incorporating Errata Corrections
+solely for the purposes of (i) developing specifications,
+and (ii) implementing Implementers Drafts, Final Specifications,
+and Final Specification Incorporating Errata Corrections based
+on such documents, provided that attribution be made to the OIDF as the
+source of the material, but that such attribution does not indicate an
+endorsement by the OIDF.
+
+The technology described in this specification was made available
+from contributions from various sources, including members of the OpenID
+Foundation and others. Although the OpenID Foundation has taken steps to
+help ensure that the technology is available for distribution, it takes
+no position regarding the validity or scope of any intellectual property
+or other rights that might be claimed to pertain to the implementation
+or use of the technology described in this specification or the extent
+to which any license under such rights might or might not be available;
+neither does it represent that it has made any independent effort to
+identify any such rights. The OpenID Foundation and the contributors to
+this specification make no (and hereby expressly disclaim any)
+warranties (express, implied, or otherwise), including implied
+warranties of merchantability, non-infringement, fitness for a
+particular purpose, or title, related to this specification, and the
+entire risk as to implementing this specification is assumed by the
+implementer. The OpenID Intellectual Property Rights policy
+(found at openid.net) requires
+contributors to offer a patent promise not to assert certain patent
+claims against other contributors and against implementers.
+OpenID invites any interested party to bring to its attention any
+copyrights, patents, patent applications, or other proprietary rights
+that may cover technology that may be required to practice this
+specification.
+
+# Acknowledgements
+
+We would like to thank the following individuals for their contributions to this specification:
+
+# Document History
+
+[[ To be removed from the final specification ]]
+
+-00
+
+* Initial version, fixing OpenID Federation issue #56.
