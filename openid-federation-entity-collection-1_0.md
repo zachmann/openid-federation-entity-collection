@@ -130,9 +130,9 @@ Host: openid.sunet.se
 
 ### Response Format
 
-A successful response MUST use the HTTP status code 200 and the content type `application/json` or `application/entity-collection-response+jwt`. 
+A successful response MUST use the HTTP status code 200 and the content type `application/json`. 
 
-The response is either a JSON object as described below or a signed JWT that is explicitly typed by setting the `typ` header parameter to `entity-collection-response+jwt` to prevent cross-JWT confusion. It is signed with a Federation Entity Key and encodes the same JSON object described below.
+The response is a JSON object as described below.
 
 If the response is negative, it will be a JSON object and the content type MUST be `application/json` and use the errors defined here or in [@!OpenID.Federation].
 
@@ -176,10 +176,6 @@ have been verified by the responder MAY appear in the response.
 that compose the Trust Chain, starting with the Entity referenced in `entity_id`
 and ending with the selected Trust Anchor, as defined in Section 4 of
 [@!OpenID.Federation].
-- **metadata**: (OPTIONAL) JSON Object containing the resolved subject metdata,
-according to the requested `entity_type` and `trust_anchor`.  
-If this claim is included in the response for any of the Entities, the response
-MUST be a signed JWT as described above and MUST NOT be an unsigned JSON object.
 
 Additional claims MAY be defined and used in conjunction with the claims above.
 
