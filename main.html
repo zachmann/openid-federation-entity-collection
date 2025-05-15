@@ -1205,7 +1205,7 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left"></td>
 <td class="center">openid-federation-entity-collection</td>
-<td class="right">April 2025</td>
+<td class="right">May 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Zachmann</td>
@@ -1220,7 +1220,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">individual</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-04-30" class="published">30 April 2025</time>
+<time datetime="2025-05-15" class="published">15 May 2025</time>
     </dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
@@ -1410,7 +1410,7 @@ If the responder does not support this feature, it MUST use the HTTP status code
 If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.4">
-              <p id="section-2.2.1-2.4.1"><strong>trust_mark_kind</strong>: (OPTIONAL) The value of this parameter is a Trust Mark Kind. The list in the response is filtered to include only Entities that publish a Trust Mark for this Trust Mark Kind in their Entity Configuration and is verified by the responder. The responder SHOULD verify the Trust Mark using the same Trust Anchor that is used to collect the Entities. When multiple <code>trust_mark_kind</code> parameters are present, the result MUST be filtered to include all specified Trust Marks.<br>
+              <p id="section-2.2.1-2.4.1"><strong>trust_mark_type</strong>: (OPTIONAL) The value of this parameter is a Trust Mark Type Identifier. The list in the response is filtered to include only Entities that publish a Trust Mark with this Trust Mark Type in their Entity Configuration and is verified by the responder. The responder SHOULD verify the Trust Mark using the same Trust Anchor that is used to collect the Entities. When multiple <code>trust_mark_type</code> parameters are present, the result MUST be filtered to include all specified Trust Marks.<br>
 If the responder does not support this feature, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.5">
@@ -1697,7 +1697,12 @@ specification.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
       <h2 id="name-acknowledgements">
 <a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
       </h2>
-<p id="appendix-B-1">We would like to thank the following individuals for their contributions to this specification:<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-1">We would like to thank the following individuals for their contributions to this specification:
+Niels van Dijk,
+Stefan Santesson,
+Phil Smart,
+Zacharias Törnblom,
+and the Geant Trust &amp; Identity Incubator of Geant5-2.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="document-history">
