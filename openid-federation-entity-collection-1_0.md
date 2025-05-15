@@ -328,6 +328,11 @@ specification.
 # Acknowledgements
 
 We would like to thank the following individuals for their contributions to this specification:
+Niels van Dijk,
+Stefan Santesson,
+Phil Smart,
+Zacharias Törnblom,
+and the Geant Trust & Identity Incubator of Geant5-2.
 
 # Document History
 
