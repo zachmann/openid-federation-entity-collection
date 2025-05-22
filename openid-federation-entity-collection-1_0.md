@@ -22,7 +22,7 @@ organization="Karlsruhe Institute of Technology"
 
 .# Abstract
 
-This specification acts as an extension to the [@!OpenID.Federation]. It defines an additional federation endpoint to retrieve a filterable list of all resolvable entities in a (sub-)federation.
+This specification acts as an extension to the [@!OpenID.Federation]. It defines an additional federation endpoint to retrieve a filterable list of Entities in a (sub-)federation.
 
 {mainmatter}
 
@@ -141,7 +141,9 @@ If the response is negative, it will be a JSON object and the content type MUST 
 The claims in the entity collection response are:
 
 - **entities**: (REQUIRED) Array of JSON objects, each representing an
-Federation Entity using the format described below.
+Federation Entity using the format described below. The list of Entities MUST
+only contain Entities that are in line with the requested parameters. The
+responder MAY also filter down the list further at its own discretion.
 - **next_entity_id**: (OPTIONAL) Entity Identifier for the next element in the
 result list where the next page begins. This attribute is REQUIRED when
 additional results are available beyond those included in the `entities` array.
@@ -216,6 +218,19 @@ Additional claims MAY be defined and used in conjunction with the claims above.
   ]
 }
 ```
+
+# Implementation Considerations
+
+## Entity Collection Endpoint Scope
+
+The responder is free to restrict the scope of its Entity Collection Endpoint,
+such as, but not limited to:
+- Only supporting a limited set of Trust Anchors.
+- Filter out Entities from the response at their own discretion. Such additional filters MAY be:
+  - Only Entities that have a certain Trust Mark.
+  - Only Entities that have a valid Trust Chain to the Trust Anchor.
+  - Only Entities that are resolvable at the Resolve Endpoint of the Entity
+  providing the Entity Collection Endpoint.
 
 # Privacy Considerations
 
