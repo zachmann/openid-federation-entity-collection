@@ -225,6 +225,7 @@ Additional claims MAY be defined and used in conjunction with the claims above.
 
 The responder is free to restrict the scope of its Entity Collection Endpoint,
 such as, but not limited to:
+
 - Only supporting a limited set of Trust Anchors.
 - Filter out Entities from the response at their own discretion. Such additional filters MAY be:
   - Only Entities that have a certain Trust Mark.
