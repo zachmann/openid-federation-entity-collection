@@ -108,6 +108,12 @@ If the responder does not support this feature, it MUST use the HTTP status code
 
 - **trust_anchor**: (RECOMMENDED) The Trust Anchor that the collection endpoint MUST use when collecting Entities. The value is an Entity Identifier. If omitted, the responder sets this parameter to its own Entity Identifier. If the responder does not have a defined Entity Identifier, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `invalid_request`.
 
+- **query**: (OPTIONAL) The value of this parameter is used by the responder to
+filter down the list of returned Entities to only entities that match this
+parameter value. It is entirely up to the responder to define when an Entity
+matches the query.  
+If the responder does not support this feature, it SHOULD use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
+
 -	**claims**: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.  
 If this parameter is present and it is NOT an empty array, each JSON object that represents an Entity MUST include the requested claims if available.  
