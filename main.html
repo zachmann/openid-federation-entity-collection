@@ -1287,6 +1287,11 @@ li > p:last-of-type:only-child {
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-unsigned-response" class="internal xref">Unsigned Response</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
@@ -1526,8 +1531,7 @@ The responder SHOULD use the following mapping between metadata claims and this 
 </li>
               <li class="compact" id="section-2.3.2.1-2.5">
                 <strong>trust_marks</strong>: (OPTIONAL) Array of objects, each representing a Trust Mark,
-as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>. Only valid Trust Marks that
-have been verified by the responder MAY appear in the response.<a href="#section-2.3.2.1-2.5" class="pilcrow">¶</a>
+as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-2.3.2.1-2.5" class="pilcrow">¶</a>
 </li>
             </ul>
 <p id="section-2.3.2.1-3">Additional claims MAY be defined and used in conjunction with the claims above.<a href="#section-2.3.2.1-3" class="pilcrow">¶</a></p>
@@ -1599,8 +1603,21 @@ have been verified by the responder MAY appear in the response.<a href="#section
       <h2 id="name-security-considerations">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-4-1">The security considerations of OpenID Federation 1.0 <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>
-apply to this specification.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-1">In additional to the considerations below, the security considerations of
+OpenID Federation 1.0 <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span> apply to this specification.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="unsigned-response">
+<section id="section-4.1">
+        <h3 id="name-unsigned-response">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-unsigned-response" class="section-name selfRef">Unsigned Response</a>
+        </h3>
+<p id="section-4.1-1">The response from the Entity Collection Endpoint is not signed and the obtained
+information should only be considered as informational.
+To verify an Entity proper trust validation according to OpenID Federation 1.0 <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>
+still MUST be done.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">It is also noted that Trust Marks returned in the response MAY not be verified
+and clients MUST consider them as not yet verified.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <section id="section-5">
