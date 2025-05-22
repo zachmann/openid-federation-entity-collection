@@ -170,8 +170,7 @@ The responder SHOULD use the following mapping between metadata claims and this 
 	  - `oauth_client`: `client_name`
 	  - `oauth_resource`: `resource_name`
 - **trust_marks**: (OPTIONAL) Array of objects, each representing a Trust Mark,
-as defined in Section 3 of [@!OpenID.Federation]. Only valid Trust Marks that
-have been verified by the responder MAY appear in the response.
+as defined in Section 3 of [@!OpenID.Federation].
 
 Additional claims MAY be defined and used in conjunction with the claims above.
 
@@ -224,8 +223,19 @@ TODO
 
 # Security Considerations
 
-The security considerations of OpenID Federation 1.0 [@!OpenID.Federation]
-apply to this specification.
+In additional to the considerations below, the security considerations of
+OpenID Federation 1.0 [@!OpenID.Federation] apply to this specification.
+
+## Unsigned Response
+
+The response from the Entity Collection Endpoint is not signed and the obtained
+information should only be considered as informational.
+To verify an Entity proper trust validation according to OpenID Federation 1.0 [@!OpenID.Federation]
+still MUST be done.
+
+It is also noted that Trust Marks returned in the response MAY not be verified
+and clients MUST consider them as not yet verified.
+
 
 {backmatter}
 
