@@ -172,10 +172,6 @@ The responder SHOULD use the following mapping between metadata claims and this 
 - **trust_marks**: (OPTIONAL) Array of objects, each representing a Trust Mark,
 as defined in Section 3 of [@!OpenID.Federation]. Only valid Trust Marks that
 have been verified by the responder MAY appear in the response.
-- **trust_chain**: (OPTIONAL) Array containing the sequence of Entity Statements
-that compose the Trust Chain, starting with the Entity referenced in `entity_id`
-and ending with the selected Trust Anchor, as defined in Section 4 of
-[@!OpenID.Federation].
 
 Additional claims MAY be defined and used in conjunction with the claims above.
 
