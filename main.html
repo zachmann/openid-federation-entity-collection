@@ -1286,7 +1286,10 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-implementation-consideratio" class="internal xref">Implementation Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-entity-collection-endpoint-" class="internal xref">Entity Collection Endpoint Scope</a></p>
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-mapping-entity-configuratio" class="internal xref">Mapping Entity Configuration Claims to Entity Response Claims</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-entity-collection-endpoint-" class="internal xref">Entity Collection Endpoint Scope</a></p>
 </li>
             </ul>
 </li>
@@ -1419,7 +1422,7 @@ If this parameter is not present the server MUST fall back on the upper limit.<b
 If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.3">
-              <p id="section-2.2.1-2.3.1"><strong>entity_type</strong>: (OPTIONAL) The value of this parameter is an Entity Type Identifier. The result MUST be filtered to include only those entities that include the specified Entity Type. When multiple <code>entity_type</code> parameters are present, for example <code>entity_type=openid_provider&amp;entity_type=openid_relying_party</code>, the result MUST be filtered to include all specified Entity Types.<br>
+              <p id="section-2.2.1-2.3.1"><strong>entity_type</strong>: (OPTIONAL) The value of this parameter is an Entity Type Identifier. The result MUST be filtered to include only those entities that include the specified Entity Type. When multiple <code>entity_type</code> parameters are present, for example <code>entity_type=openid_provider&amp;entity_type=openid_relying_party</code>, the result MUST be filtered to include all specified Entity Types.
 If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.4">
@@ -1504,51 +1507,54 @@ additional results are available beyond those included in the <code>entities</co
             <h5 id="name-entity-object-parameters">
 <a href="#section-2.3.2.1" class="section-number selfRef">2.3.2.1. </a><a href="#name-entity-object-parameters" class="section-name selfRef">Entity Object Parameters</a>
             </h5>
-<p id="section-2.3.2.1-1">Each JSON Object in the returned <code>entities</code> arra MAY contain the following
+<p id="section-2.3.2.1-1">Each JSON Object in the returned <code>entities</code> array MAY contain the following
 claims:<a href="#section-2.3.2.1-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-2.3.2.1-2.1">
+<ul class="normal">
+<li class="normal" id="section-2.3.2.1-2.1">
                 <strong>entity_id</strong>: (REQUIRED) The Entity Identifier for the subject entity of the
 current record.<a href="#section-2.3.2.1-2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-2.3.2.1-2.2">
+              <li class="normal" id="section-2.3.2.1-2.2">
                 <strong>entity_types</strong>: (RECOMMENDED) Array of string Entity Type Identifiers. If
 present this claim MUST contain all Entity Type Identifiers of the subject's
 Entity the responder knows about.<a href="#section-2.3.2.1-2.2" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-2.3.2.1-2.3">
-                <strong>logo_uris</strong>: (OPTIONAL) JSON Object representing logo uris for different Entity Types. Each member name of the JSON object is an Entity Type Identifier and each value is the logo uri for that entity type. If the <code>logo_uri</code> claim is present for an Entity Type Identifier in the metadata response claim and this claim <code>logo_uris</code> is present the value from metadata MUST be equal to the value in this claim.<a href="#section-2.3.2.1-2.3" class="pilcrow">¶</a>
+              <li class="normal" id="section-2.3.2.1-2.3">
+                <p id="section-2.3.2.1-2.3.1"><strong>ui_infos</strong>: (OPTIONAL) JSON Object containing information intended to be displayed to the user for each entity
+type. Each member name of the JSON object is an Entity Type Identifier and each
+value is a JSON Object as defined below.<br>
+If the request contains the <code>entity_type</code> parameter, the <code>ui_infos</code> Object MUST
+only contain Entity Types that are among the ones requested, with the exception
+of the <code>federation_entity</code> Entity Type, which MAY also appear if not requested.<br>
+Additional claims MAY be defined and used in conjunction
+with the following claims:<a href="#section-2.3.2.1-2.3.1" class="pilcrow">¶</a></p>
+<ul class="compact normal">
+<li class="compact normal" id="section-2.3.2.1-2.3.2.1">
+                    <em>display_name</em>: String. A human-readable name of the Entity to be presented to the End-User.<br>
+This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 <span>[<a href="#RFC5646" class="cite xref">RFC5646</a>]</span> language tags are added to the Claim name, delimited by a <code>#</code> character.<a href="#section-2.3.2.1-2.3.2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-2.3.2.1-2.4">
-                <p id="section-2.3.2.1-2.4.1"><strong>display_names</strong>: (OPTIONAL) JSON Object representing human readable names for the subject’s Entity according to different Entity Types. Each member name of the JSON object is an Entity Type Identifier and each value is a human readable string presentable to the End-User.<br>
-This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 <span>[<a href="#RFC5646" class="cite xref">RFC5646</a>]</span> language tags are added to the Claim name, delimited by a <code>#</code> character.<br>
-The responder SHOULD use the following mapping between metadata claims and this claim if present in the metadata:<a href="#section-2.3.2.1-2.4.1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-2.3.2.1-2.4.2.1">
-                    <code>federation_entity</code>: TBD, maybe <code>organization_name</code><a href="#section-2.3.2.1-2.4.2.1" class="pilcrow">¶</a>
+                  <li class="compact normal" id="section-2.3.2.1-2.3.2.2">
+                    <em>description</em>: String. A human-readable brief description of this Entity presentable to the End-User.<br>
+This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 <span>[<a href="#RFC5646" class="cite xref">RFC5646</a>]</span> language tags are added to the Claim name, delimited by a <code>#</code> character.<a href="#section-2.3.2.1-2.3.2.2" class="pilcrow">¶</a>
 </li>
-                  <li class="compact" id="section-2.3.2.1-2.4.2.2">
-                    <p id="section-2.3.2.1-2.4.2.2.1"><code>openid_relying_party</code>: <code>client_name</code><a href="#section-2.3.2.1-2.4.2.2.1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-2.3.2.1-2.4.2.2.2.1">
-                        <code>openid_provider</code>: TBD<a href="#section-2.3.2.1-2.4.2.2.2.1" class="pilcrow">¶</a>
+                  <li class="compact normal" id="section-2.3.2.1-2.3.2.3">
+                    <em>keywords</em>: JSON array with one or more strings representing search
+keywords, tags, categories, or labels that apply to this Entity.<a href="#section-2.3.2.1-2.3.2.3" class="pilcrow">¶</a>
 </li>
-                      <li class="compact" id="section-2.3.2.1-2.4.2.2.2.2">
-                        <code>oauth_authorization_server</code>: TBD<a href="#section-2.3.2.1-2.4.2.2.2.2" class="pilcrow">¶</a>
+                  <li class="compact normal" id="section-2.3.2.1-2.3.2.4">
+                    <em>logo_uri</em>: String. A URL that points to the logo of this Entity.<a href="#section-2.3.2.1-2.3.2.4" class="pilcrow">¶</a>
 </li>
-                      <li class="compact" id="section-2.3.2.1-2.4.2.2.2.3">
-                        <code>oauth_client</code>: <code>client_name</code><a href="#section-2.3.2.1-2.4.2.2.2.3" class="pilcrow">¶</a>
+                  <li class="compact normal" id="section-2.3.2.1-2.3.2.5">
+                    <em>policy_uri</em>: String. A URL of the documentation of conditions and policies relevant to this Entity.<a href="#section-2.3.2.1-2.3.2.5" class="pilcrow">¶</a>
 </li>
-                      <li class="compact" id="section-2.3.2.1-2.4.2.2.2.4">
-                        <code>oauth_resource</code>: <code>resource_name</code><a href="#section-2.3.2.1-2.4.2.2.2.4" class="pilcrow">¶</a>
-</li>
-                    </ul>
+                  <li class="compact normal" id="section-2.3.2.1-2.3.2.6">
+                    <em>information_uri</em>: String. A URL for documentation of additional information about this Entity viewable by the End-User.<a href="#section-2.3.2.1-2.3.2.6" class="pilcrow">¶</a>
 </li>
                 </ul>
 </li>
-              <li class="compact" id="section-2.3.2.1-2.5">
-                <strong>trust_marks</strong>: (OPTIONAL) Array of objects, each representing a Trust Mark,
-as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-2.3.2.1-2.5" class="pilcrow">¶</a>
+              <li class="normal" id="section-2.3.2.1-2.4">
+                <p id="section-2.3.2.1-2.4.1"><strong>trust_marks</strong>: (OPTIONAL) Array of objects, each representing a Trust Mark,
+as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-2.3.2.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <p id="section-2.3.2.1-3">Additional claims MAY be defined and used in conjunction with the claims above.<a href="#section-2.3.2.1-3" class="pilcrow">¶</a></p>
@@ -1563,30 +1569,32 @@ as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref"
 <pre>{
   "federation_entities": [
     {
-      "display_names": {
-        "federation_entity": "The green organization"
-      },
       "entity_id": "https://green.example.com",
       "entity_types": [
         "federation_entity"
       ],
-      "logo_uris": {
-        "federation_entity": "https://green.example.com/logo.png"
+      "ui_infos": {
+        "federation_entity": {
+          "display_name": "The green organization",
+          "logo_uri": "https://green.example.com/logo.png"
+        }
       }
     },
     {
-      "display_names": {
-        "federation_entity": "Red Organization",
-        "openid_relying_party": "Red RP"
-      },
       "entity_id": "https://red.example.com",
       "entity_types": [
         "openid_relying_party",
         "federation_entity"
       ],
-      "logo_uris": {
-        "federation_entity": "https://red.example.com/logo.png",
-        "openid_relying_party": "https://red.example.com/logo.png"
+      "ui_infos": {
+        "federation_entity": {
+          "display_name": "Red Organization",
+          "logo_uri": "https://red.example.com/logo.png"
+        },
+        "openid_relying_party": {
+          "display_name": "Red RP",
+          "logo_uri": "https://red.example.com/logo.png"
+        }
       }
     },
     {
@@ -1612,25 +1620,65 @@ as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref"
       <h2 id="name-implementation-consideratio">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-implementation-consideratio" class="section-name selfRef">Implementation Considerations</a>
       </h2>
-<div id="entity-collection-endpoint-scope">
+<div id="mapping-entity-configuration-claims-to-entity-response-claims">
 <section id="section-3.1">
-        <h3 id="name-entity-collection-endpoint-">
-<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-entity-collection-endpoint-" class="section-name selfRef">Entity Collection Endpoint Scope</a>
+        <h3 id="name-mapping-entity-configuratio">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-mapping-entity-configuratio" class="section-name selfRef">Mapping Entity Configuration Claims to Entity Response Claims</a>
         </h3>
-<p id="section-3.1-1">The responder is free to restrict the scope of its Entity Collection Endpoint,
-such as, but not limited to:<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-1">It is up to the implementation to decide how the responded <code>ui_infos</code> claims about an entity are
+populated. Implementations SHOULD consider the information published by entities
+in their Entity Configuration and MAY consider additional information.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">The following mapping between Claims in the <code>ui_infos</code> response Claim and Metadata Claims in the
+Entity Configuration SHOULD be considered:<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-3.1-2.1">Only supporting a limited set of Trust Anchors.<a href="#section-3.1-2.1" class="pilcrow">¶</a>
-</li>
-          <li class="compact" id="section-3.1-2.2">
-            <p id="section-3.1-2.2.1">Filter out Entities from the response at their own discretion. Such additional filters MAY be:<a href="#section-3.1-2.2.1" class="pilcrow">¶</a></p>
+<li class="compact" id="section-3.1-3.1">
+            <p id="section-3.1-3.1.1"><code>display_name</code>: The <code>display_name</code> Claim is a common Metadata Claim useable with all Entity Types. If set it SHOULD be copied to the response. If the <code>display_name</code> Claim is not set other Claims MAY be considered, such as:<a href="#section-3.1-3.1.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-3.1-2.2.2.1">Only Entities that have a certain Trust Mark.<a href="#section-3.1-2.2.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-3.1-3.1.2.1">For the <code>openid_relying_party</code> Entity Type: <code>client_name</code><a href="#section-3.1-3.1.2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-3.1-2.2.2.2">Only Entities that have a valid Trust Chain to the Trust Anchor.<a href="#section-3.1-2.2.2.2" class="pilcrow">¶</a>
+              <li class="compact" id="section-3.1-3.1.2.2">For the <code>oauth_client</code> Entity Type: <code>client_name</code><a href="#section-3.1-3.1.2.2" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-3.1-2.2.2.3">Only Entities that are resolvable at the Resolve Endpoint of the Entity
-providing the Entity Collection Endpoint.<a href="#section-3.1-2.2.2.3" class="pilcrow">¶</a>
+              <li class="compact" id="section-3.1-3.1.2.3">For the <code>oauth_resource</code> Entity Type: <code>resource_name</code><a href="#section-3.1-3.1.2.3" class="pilcrow">¶</a>
+</li>
+            </ul>
+</li>
+          <li class="compact" id="section-3.1-3.2">
+            <code>description</code>: The <code>description</code> Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.<a href="#section-3.1-3.2" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-3.1-3.3">
+            <code>keywords</code>: The <code>keywords</code> Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.<a href="#section-3.1-3.3" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-3.1-3.4">
+            <code>logo_uri</code>: The <code>logo_uri</code> Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.<a href="#section-3.1-3.4" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-3.1-3.5">
+            <code>policy_uri</code>: The <code>policy_uri</code> Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.<a href="#section-3.1-3.5" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-3.1-3.6">
+            <code>information_uri</code>: The <code>information_uri</code> Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.<a href="#section-3.1-3.6" class="pilcrow">¶</a>
+</li>
+        </ul>
+</section>
+</div>
+<div id="entity-collection-endpoint-scope">
+<section id="section-3.2">
+        <h3 id="name-entity-collection-endpoint-">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-entity-collection-endpoint-" class="section-name selfRef">Entity Collection Endpoint Scope</a>
+        </h3>
+<p id="section-3.2-1">The responder is free to restrict the scope of its Entity Collection Endpoint,
+such as, but not limited to:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-3.2-2.1">Only supporting a limited set of Trust Anchors.<a href="#section-3.2-2.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1">Filter out Entities from the response at their own discretion. Such additional filters MAY be:<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-3.2-2.2.2.1">Only Entities that have a certain Trust Mark.<a href="#section-3.2-2.2.2.1" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="section-3.2-2.2.2.2">Only Entities that have a valid Trust Chain to the Trust Anchor.<a href="#section-3.2-2.2.2.2" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="section-3.2-2.2.2.3">Only Entities that are resolvable at the Resolve Endpoint of the Entity
+providing the Entity Collection Endpoint.<a href="#section-3.2-2.2.2.3" class="pilcrow">¶</a>
 </li>
             </ul>
 </li>
@@ -1768,6 +1816,9 @@ and the Geant Trust &amp; Identity Incubator of Geant5-2.<a href="#appendix-B-1"
 <p id="appendix-C-2">-00<a href="#appendix-C-2" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="appendix-C-3.1">Initial version, fixing OpenID Federation issue #56.<a href="#appendix-C-3.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-C-3.2">
+          <code>information_uri</code>: The <code>information_uri</code> Claim is a common Metadata Claim useable with all Entity Types.<a href="#appendix-C-3.2" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
