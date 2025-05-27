@@ -22,7 +22,7 @@ organization="Karlsruhe Institute of Technology"
 
 .# Abstract
 
-This specification acts as an extension to the [@!OpenID.Federation]. It defines an additional federation endpoint to retrieve a filterable list of all resolvable entities in a (sub-)federation.
+This specification acts as an extension to the [@!OpenID.Federation]. It defines an additional federation endpoint to retrieve a filterable list of Entities in a (sub-)federation.
 
 {mainmatter}
 
@@ -108,6 +108,12 @@ If the responder does not support this feature, it MUST use the HTTP status code
 
 - **trust_anchor**: (RECOMMENDED) The Trust Anchor that the collection endpoint MUST use when collecting Entities. The value is an Entity Identifier. If omitted, the responder sets this parameter to its own Entity Identifier. If the responder does not have a defined Entity Identifier, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `invalid_request`.
 
+- **query**: (OPTIONAL) The value of this parameter is used by the responder to
+filter down the list of returned Entities to only entities that match this
+parameter value. It is entirely up to the responder to define when an Entity
+matches the query.  
+If the responder does not support this feature, it SHOULD use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
+
 -	**claims**: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.  
 If this parameter is present and it is NOT an empty array, each JSON object that represents an Entity MUST include the requested claims if available.  
@@ -130,9 +136,9 @@ Host: openid.sunet.se
 
 ### Response Format
 
-A successful response MUST use the HTTP status code 200 and the content type `application/json` or `application/entity-collection-response+jwt`. 
+A successful response MUST use the HTTP status code 200 and the content type `application/json`. 
 
-The response is either a JSON object as described below or a signed JWT that is explicitly typed by setting the `typ` header parameter to `entity-collection-response+jwt` to prevent cross-JWT confusion. It is signed with a Federation Entity Key and encodes the same JSON object described below.
+The response is a JSON object as described below.
 
 If the response is negative, it will be a JSON object and the content type MUST be `application/json` and use the errors defined here or in [@!OpenID.Federation].
 
@@ -141,7 +147,9 @@ If the response is negative, it will be a JSON object and the content type MUST 
 The claims in the entity collection response are:
 
 - **entities**: (REQUIRED) Array of JSON objects, each representing an
-Federation Entity using the format described below.
+Federation Entity using the format described below. The list of Entities MUST
+only contain Entities that are in line with the requested parameters. The
+responder MAY also filter down the list further at its own discretion.
 - **next_entity_id**: (OPTIONAL) Entity Identifier for the next element in the
 result list where the next page begins. This attribute is REQUIRED when
 additional results are available beyond those included in the `entities` array.
@@ -181,16 +189,7 @@ with the following claims:
   
 
 - **trust_marks**: (OPTIONAL) Array of objects, each representing a Trust Mark,
-as defined in Section 3 of [@!OpenID.Federation]. Only valid Trust Marks that
-have been verified by the responder MAY appear in the response.
-- **trust_chain**: (OPTIONAL) Array containing the sequence of Entity Statements
-that compose the Trust Chain, starting with the Entity referenced in `entity_id`
-and ending with the selected Trust Anchor, as defined in Section 4 of
-[@!OpenID.Federation].
-- **metadata**: (OPTIONAL) JSON Object containing the resolved subject metdata,
-according to the requested `entity_type` and `trust_anchor`.  
-If this claim is included in the response for any of the Entities, the response
-MUST be a signed JWT as described above and MUST NOT be an unsigned JSON object.
+as defined in Section 3 of [@!OpenID.Federation].
 
 Additional claims MAY be defined and used in conjunction with the claims above.
 
@@ -259,7 +258,20 @@ TODO
       - `oauth_authorization_server`: TBD
       - `oauth_client`: `client_name`
       - `oauth_resource`: `resource_name`
-      --!>
+      ---!>
+
+## Entity Collection Endpoint Scope
+
+The responder is free to restrict the scope of its Entity Collection Endpoint,
+such as, but not limited to:
+
+- Only supporting a limited set of Trust Anchors.
+- Filter out Entities from the response at their own discretion. Such additional filters MAY be:
+  - Only Entities that have a certain Trust Mark.
+  - Only Entities that have a valid Trust Chain to the Trust Anchor.
+  - Only Entities that are resolvable at the Resolve Endpoint of the Entity
+  providing the Entity Collection Endpoint.
+
 
 # Privacy Considerations
 
@@ -267,8 +279,19 @@ TODO
 
 # Security Considerations
 
-The security considerations of OpenID Federation 1.0 [@!OpenID.Federation]
-apply to this specification.
+In additional to the considerations below, the security considerations of
+OpenID Federation 1.0 [@!OpenID.Federation] apply to this specification.
+
+## Unsigned Response
+
+The response from the Entity Collection Endpoint is not signed and the obtained
+information should only be considered as informational.
+To verify an Entity proper trust validation according to OpenID Federation 1.0 [@!OpenID.Federation]
+still MUST be done.
+
+It is also noted that Trust Marks returned in the response MAY not be verified
+and clients MUST consider them as not yet verified.
+
 
 {backmatter}
 
