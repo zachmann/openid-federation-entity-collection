@@ -7,7 +7,7 @@
 <title>OpenID Federation Entity Collection Endpoint 1.0 - draft 00</title>
 <meta content="Gabriel Zachmann" name="author">
 <meta content="
-       This specification acts as an extension to the  . It defines an additional federation endpoint to retrieve a filterable list of all resolvable entities in a (sub-)federation. 
+       This specification acts as an extension to the  . It defines an additional federation endpoint to retrieve a filterable list of Entities in a (sub-)federation. 
     " name="description">
 <meta content="xml2rfc 3.16.0" name="generator">
 <meta content="security" name="keyword">
@@ -1220,7 +1220,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">individual</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-15" class="published">15 May 2025</time>
+<time datetime="2025-05-27" class="published">27 May 2025</time>
     </dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
@@ -1234,7 +1234,7 @@ li > p:last-of-type:only-child {
 <h1 id="title">OpenID Federation Entity Collection Endpoint 1.0 - draft 00</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This specification acts as an extension to the <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>. It defines an additional federation endpoint to retrieve a filterable list of all resolvable entities in a (sub-)federation.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This specification acts as an extension to the <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>. It defines an additional federation endpoint to retrieve a filterable list of Entities in a (sub-)federation.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <div id="toc">
 <section id="section-toc.1">
@@ -1288,6 +1288,9 @@ li > p:last-of-type:only-child {
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
                 <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-mapping-entity-configuratio" class="internal xref">Mapping Entity Configuration Claims to Entity Response Claims</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-entity-collection-endpoint-" class="internal xref">Entity Collection Endpoint Scope</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
@@ -1295,6 +1298,11 @@ li > p:last-of-type:only-child {
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-unsigned-response" class="internal xref">Unsigned Response</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
@@ -1425,10 +1433,17 @@ If the responder does not support this feature, it MUST use the HTTP status code
               <p id="section-2.2.1-2.5.1"><strong>trust_anchor</strong>: (RECOMMENDED) The Trust Anchor that the collection endpoint MUST use when collecting Entities. The value is an Entity Identifier. If omitted, the responder sets this parameter to its own Entity Identifier. If the responder does not have a defined Entity Identifier, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>invalid_request</code>.<a href="#section-2.2.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.6">
-              <p id="section-2.2.1-2.6.1"><strong>claims</strong>: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
+              <p id="section-2.2.1-2.6.1"><strong>query</strong>: (OPTIONAL) The value of this parameter is used by the responder to
+filter down the list of returned Entities to only entities that match this
+parameter value. It is entirely up to the responder to define when an Entity
+matches the query.<br>
+If the responder does not support this feature, it SHOULD use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.6.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-2.2.1-2.7">
+              <p id="section-2.2.1-2.7.1"><strong>claims</strong>: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.<br>
 If this parameter is present and it is NOT an empty array, each JSON object that represents an Entity MUST include the requested claims if available.<br>
-If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.6.1" class="pilcrow">¶</a></p>
+If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.7.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-2.2.1-3">When Client authentication is used, the request MUST be an HTTP request using the POST method, with the parameters passed in the POST body.<a href="#section-2.2.1-3" class="pilcrow">¶</a></p>
@@ -1459,8 +1474,8 @@ Host: openid.sunet.se
           <h4 id="name-response-format">
 <a href="#section-2.3.1" class="section-number selfRef">2.3.1. </a><a href="#name-response-format" class="section-name selfRef">Response Format</a>
           </h4>
-<p id="section-2.3.1-1">A successful response MUST use the HTTP status code 200 and the content type <code>application/json</code> or <code>application/entity-collection-response+jwt</code>.<a href="#section-2.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-2.3.1-2">The response is either a JSON object as described below or a signed JWT that is explicitly typed by setting the <code>typ</code> header parameter to <code>entity-collection-response+jwt</code> to prevent cross-JWT confusion. It is signed with a Federation Entity Key and encodes the same JSON object described below.<a href="#section-2.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-2.3.1-1">A successful response MUST use the HTTP status code 200 and the content type <code>application/json</code>.<a href="#section-2.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.3.1-2">The response is a JSON object as described below.<a href="#section-2.3.1-2" class="pilcrow">¶</a></p>
 <p id="section-2.3.1-3">If the response is negative, it will be a JSON object and the content type MUST be <code>application/json</code> and use the errors defined here or in <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-2.3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1473,7 +1488,9 @@ Host: openid.sunet.se
 <ul class="compact">
 <li class="compact" id="section-2.3.2-2.1">
               <strong>entities</strong>: (REQUIRED) Array of JSON objects, each representing an
-Federation Entity using the format described below.<a href="#section-2.3.2-2.1" class="pilcrow">¶</a>
+Federation Entity using the format described below. The list of Entities MUST
+only contain Entities that are in line with the requested parameters. The
+responder MAY also filter down the list further at its own discretion.<a href="#section-2.3.2-2.1" class="pilcrow">¶</a>
 </li>
             <li class="compact" id="section-2.3.2-2.2">
               <strong>next_entity_id</strong>: (OPTIONAL) Entity Identifier for the next element in the
@@ -1538,20 +1555,7 @@ tags, categories, or labels that apply to this entity.<a href="#section-2.3.2.1-
 </li>
               <li class="normal" id="section-2.3.2.1-2.4">
                 <p id="section-2.3.2.1-2.4.1"><strong>trust_marks</strong>: (OPTIONAL) Array of objects, each representing a Trust Mark,
-as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>. Only valid Trust Marks that
-have been verified by the responder MAY appear in the response.<a href="#section-2.3.2.1-2.4.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-2.3.2.1-2.5">
-                <p id="section-2.3.2.1-2.5.1"><strong>trust_chain</strong>: (OPTIONAL) Array containing the sequence of Entity Statements
-that compose the Trust Chain, starting with the Entity referenced in <code>entity_id</code>
-and ending with the selected Trust Anchor, as defined in Section 4 of
-<span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-2.3.2.1-2.5.1" class="pilcrow">¶</a></p>
-</li>
-              <li class="normal" id="section-2.3.2.1-2.6">
-                <p id="section-2.3.2.1-2.6.1"><strong>metadata</strong>: (OPTIONAL) JSON Object containing the resolved subject metdata,
-according to the requested <code>entity_type</code> and <code>trust_anchor</code>.<br>
-If this claim is included in the response for any of the Entities, the response
-MUST be a signed JWT as described above and MUST NOT be an unsigned JSON object.<a href="#section-2.3.2.1-2.6.1" class="pilcrow">¶</a></p>
+as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>.<a href="#section-2.3.2.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 <p id="section-2.3.2.1-3">Additional claims MAY be defined and used in conjunction with the claims above.<a href="#section-2.3.2.1-3" class="pilcrow">¶</a></p>
@@ -1637,7 +1641,32 @@ in their Entity Configuration and MAY consider additional information.<a href="#
       - <code>oauth_authorization_server</code>: TBD
       - <code>oauth_client</code>: <code>client_name</code>
       - <code>oauth_resource</code>: <code>resource_name</code>
-      --!&gt;<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+      ---!&gt;<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="entity-collection-endpoint-scope">
+<section id="section-3.2">
+        <h3 id="name-entity-collection-endpoint-">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-entity-collection-endpoint-" class="section-name selfRef">Entity Collection Endpoint Scope</a>
+        </h3>
+<p id="section-3.2-1">The responder is free to restrict the scope of its Entity Collection Endpoint,
+such as, but not limited to:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-3.2-2.1">Only supporting a limited set of Trust Anchors.<a href="#section-3.2-2.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1">Filter out Entities from the response at their own discretion. Such additional filters MAY be:<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-3.2-2.2.2.1">Only Entities that have a certain Trust Mark.<a href="#section-3.2-2.2.2.1" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="section-3.2-2.2.2.2">Only Entities that have a valid Trust Chain to the Trust Anchor.<a href="#section-3.2-2.2.2.2" class="pilcrow">¶</a>
+</li>
+              <li class="compact" id="section-3.2-2.2.2.3">Only Entities that are resolvable at the Resolve Endpoint of the Entity
+providing the Entity Collection Endpoint.<a href="#section-3.2-2.2.2.3" class="pilcrow">¶</a>
+</li>
+            </ul>
+</li>
+        </ul>
 </section>
 </div>
 </section>
@@ -1655,8 +1684,21 @@ in their Entity Configuration and MAY consider additional information.<a href="#
       <h2 id="name-security-considerations">
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-5-1">The security considerations of OpenID Federation 1.0 <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>
-apply to this specification.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-1">In additional to the considerations below, the security considerations of
+OpenID Federation 1.0 <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span> apply to this specification.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<div id="unsigned-response">
+<section id="section-5.1">
+        <h3 id="name-unsigned-response">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-unsigned-response" class="section-name selfRef">Unsigned Response</a>
+        </h3>
+<p id="section-5.1-1">The response from the Entity Collection Endpoint is not signed and the obtained
+information should only be considered as informational.
+To verify an Entity proper trust validation according to OpenID Federation 1.0 <span>[<a href="#OpenID.Federation" class="cite xref">OpenID.Federation</a>]</span>
+still MUST be done.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">It is also noted that Trust Marks returned in the response MAY not be verified
+and clients MUST consider them as not yet verified.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
 </section>
 </div>
 <section id="section-6">
