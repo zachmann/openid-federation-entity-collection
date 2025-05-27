@@ -1220,7 +1220,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">individual</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-22" class="published">22 May 2025</time>
+<time datetime="2025-05-27" class="published">27 May 2025</time>
     </dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
@@ -1430,10 +1430,17 @@ If the responder does not support this feature, it MUST use the HTTP status code
               <p id="section-2.2.1-2.5.1"><strong>trust_anchor</strong>: (RECOMMENDED) The Trust Anchor that the collection endpoint MUST use when collecting Entities. The value is an Entity Identifier. If omitted, the responder sets this parameter to its own Entity Identifier. If the responder does not have a defined Entity Identifier, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>invalid_request</code>.<a href="#section-2.2.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.6">
-              <p id="section-2.2.1-2.6.1"><strong>claims</strong>: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
+              <p id="section-2.2.1-2.6.1"><strong>query</strong>: (OPTIONAL) The value of this parameter is used by the responder to
+filter down the list of returned Entities to only entities that match this
+parameter value. It is entirely up to the responder to define when an Entity
+matches the query.<br>
+If the responder does not support this feature, it SHOULD use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.6.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-2.2.1-2.7">
+              <p id="section-2.2.1-2.7.1"><strong>claims</strong>: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.<br>
 If this parameter is present and it is NOT an empty array, each JSON object that represents an Entity MUST include the requested claims if available.<br>
-If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.6.1" class="pilcrow">¶</a></p>
+If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.7.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-2.2.1-3">When Client authentication is used, the request MUST be an HTTP request using the POST method, with the parameters passed in the POST body.<a href="#section-2.2.1-3" class="pilcrow">¶</a></p>
