@@ -100,7 +100,7 @@ If this parameter is present, the number of results in the returned list MUST NO
 If this parameter is not present the server MUST fall back on the upper limit.  
   If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
   
-- **entity_type**: (OPTIONAL) The value of this parameter is an Entity Type Identifier. The result MUST be filtered to include only those entities that include the specified Entity Type. When multiple `entity_type` parameters are present, for example `entity_type=openid_provider&entity_type=openid_relying_party`, the result MUST be filtered to include all specified Entity Types.  
+- **entity_type**: (OPTIONAL) The value of this parameter is an Entity Type Identifier. The result MUST be filtered to include only those entities that include the specified Entity Type. When multiple `entity_type` parameters are present, for example `entity_type=openid_provider&entity_type=openid_relying_party`, the result MUST be filtered to include all specified Entity Types. 
 If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
 
 - **trust_mark_type**: (OPTIONAL) The value of this parameter is a Trust Mark Type Identifier. The list in the response is filtered to include only Entities that publish a Trust Mark with this Trust Mark Type in their Entity Configuration and is verified by the responder. The responder SHOULD verify the Trust Mark using the same Trust Anchor that is used to collect the Entities. When multiple `trust_mark_type` parameters are present, the result MUST be filtered to include all specified Trust Marks.  
@@ -159,7 +159,7 @@ Additional claims MAY be defined and used in conjunction with the claims above.
 
 #### Entity Object Parameters
 
-Each JSON Object in the returned `entities` arra MAY contain the following
+Each JSON Object in the returned `entities` array MAY contain the following
 claims:
 
 - **entity_id**: (REQUIRED) The Entity Identifier for the subject entity of the
@@ -167,16 +167,26 @@ current record.
 - **entity_types**: (RECOMMENDED) Array of string Entity Type Identifiers. If
 present this claim MUST contain all Entity Type Identifiers of the subject's
 Entity the responder knows about.
-- **logo_uris**: (OPTIONAL) JSON Object representing logo uris for different Entity Types. Each member name of the JSON object is an Entity Type Identifier and each value is the logo uri for that entity type. If the `logo_uri` claim is present for an Entity Type Identifier in the metadata response claim and this claim `logo_uris` is present the value from metadata MUST be equal to the value in this claim.
-- **display_names**: (OPTIONAL) JSON Object representing human readable names for the subject’s Entity according to different Entity Types. Each member name of the JSON object is an Entity Type Identifier and each value is a human readable string presentable to the End-User.  
-This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to the Claim name, delimited by a `#` character.  
-The responder SHOULD use the following mapping between metadata claims and this claim if present in the metadata:
-    - `federation_entity`: TBD, maybe `organization_name`
-    - `openid_relying_party`: `client_name`
-	  - `openid_provider`: TBD
-	  - `oauth_authorization_server`: TBD
-	  - `oauth_client`: `client_name`
-	  - `oauth_resource`: `resource_name`
+- **ui_infos**: (OPTIONAL) JSON Object containing information intended to be displayed to the user for each entity
+type. Each member name of the JSON object is an Entity Type Identifier and each
+value is a JSON Object as defined below.  
+If the request contains the `entity_type` parameter, the `ui_infos` Object MUST
+only contain Entity Types that are among the ones requested, with the exception
+of the `federation_entity` Entity Type, which MAY also appear if not requested.  
+Additional claims MAY be defined and used in conjunction
+with the following claims:
+
+  - *display_name*: String. A human-readable name of the Entity to be presented to the End-User.  
+  This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to the Claim name, delimited by a `#` character.
+  - *description*: String. A human-readable brief description of this Entity presentable to the End-User.  
+  This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to the Claim name, delimited by a `#` character.
+  - *keywords*: JSON array with one or more strings representing search
+  keywords, tags, categories, or labels that apply to this Entity.
+  - *logo_uri*: String. A URL that points to the logo of this Entity.
+  - *policy_uri*: String. A URL of the documentation of conditions and policies relevant to this Entity.
+  - *information_uri*: String. A URL for documentation of additional information about this Entity viewable by the End-User.
+  
+
 - **trust_marks**: (OPTIONAL) Array of objects, each representing a Trust Mark,
 as defined in Section 3 of [@!OpenID.Federation].
 
@@ -189,30 +199,32 @@ Additional claims MAY be defined and used in conjunction with the claims above.
 {
   "federation_entities": [
     {
-      "display_names": {
-        "federation_entity": "The green organization"
-      },
       "entity_id": "https://green.example.com",
       "entity_types": [
         "federation_entity"
       ],
-      "logo_uris": {
-        "federation_entity": "https://green.example.com/logo.png"
+      "ui_infos": {
+        "federation_entity": {
+          "display_name": "The green organization",
+          "logo_uri": "https://green.example.com/logo.png"
+        }
       }
     },
     {
-      "display_names": {
-        "federation_entity": "Red Organization",
-        "openid_relying_party": "Red RP"
-      },
       "entity_id": "https://red.example.com",
       "entity_types": [
         "openid_relying_party",
         "federation_entity"
       ],
-      "logo_uris": {
-        "federation_entity": "https://red.example.com/logo.png",
-        "openid_relying_party": "https://red.example.com/logo.png"
+      "ui_infos": {
+        "federation_entity": {
+          "display_name": "Red Organization",
+          "logo_uri": "https://red.example.com/logo.png"
+        },
+        "openid_relying_party": {
+          "display_name": "Red RP",
+          "logo_uri": "https://red.example.com/logo.png"
+        }
       }
     },
     {
@@ -227,6 +239,24 @@ Additional claims MAY be defined and used in conjunction with the claims above.
 
 # Implementation Considerations
 
+## Mapping Entity Configuration Claims to Entity Response Claims 
+It is up to the implementation to decide how the responded `ui_infos` claims about an entity are
+populated. Implementations SHOULD consider the information published by entities
+in their Entity Configuration and MAY consider additional information.
+
+The following mapping between Claims in the `ui_infos` response Claim and Metadata Claims in the
+Entity Configuration SHOULD be considered:
+
+- `display_name`: The `display_name` Claim is a common Metadata Claim useable with all Entity Types. If set it SHOULD be copied to the response. If the `display_name` Claim is not set other Claims MAY be considered, such as:
+  - For the `openid_relying_party` Entity Type: `client_name`
+  - For the `oauth_client` Entity Type: `client_name`
+  - For the `oauth_resource` Entity Type: `resource_name`
+- `description`: The `description` Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.
+- `keywords`: The `keywords` Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.
+- `logo_uri`: The `logo_uri` Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.
+- `policy_uri`: The `policy_uri` Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.
+- `information_uri`: The `information_uri` Claim is a common Metadata Claim useable with all Entity Types. It SHOULD be copied to the response.
+
 ## Entity Collection Endpoint Scope
 
 The responder is free to restrict the scope of its Entity Collection Endpoint,
@@ -238,6 +268,7 @@ such as, but not limited to:
   - Only Entities that have a valid Trust Chain to the Trust Anchor.
   - Only Entities that are resolvable at the Resolve Endpoint of the Entity
   providing the Entity Collection Endpoint.
+
 
 # Privacy Considerations
 
@@ -365,3 +396,4 @@ and the Geant Trust & Identity Incubator of Geant5-2.
 -00
 
 * Initial version, fixing OpenID Federation issue #56.
+- `information_uri`: The `information_uri` Claim is a common Metadata Claim useable with all Entity Types.
