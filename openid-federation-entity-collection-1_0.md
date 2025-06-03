@@ -128,7 +128,7 @@ When Client authentication is used, the request MUST be an HTTP request using th
 The following is a non-normative example of a collection request:
 
 ```http
-GET /collection?entity_type=openid_provider&trust_mark_id=https%3A%2F%2Frp%2Erefeds.org%2Fsitfi&trust_anchor=https%3A%2F%2Fswamid.se HTTP/1.1
+GET /collection?entity_type=openid_provider&trust_mark_type=https%3A%2F%2Frp%2Erefeds.org%2Fsitfi&trust_anchor=https%3A%2F%2Fswamid.se HTTP/1.1
 Host: openid.sunet.se
 ```
 
