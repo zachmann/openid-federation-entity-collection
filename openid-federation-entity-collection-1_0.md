@@ -176,10 +176,8 @@ of the `federation_entity` Entity Type, which MAY also appear if not requested.
 Additional claims MAY be defined and used in conjunction
 with the following claims:
 
-  - *display_name*: String. A human-readable name of the Entity to be presented to the End-User.  
-  This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to the Claim name, delimited by a `#` character.
-  - *description*: String. A human-readable brief description of this Entity presentable to the End-User.  
-  This Claim MAY be represented in multiple languages and scripts. To specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to the Claim name, delimited by a `#` character.
+  - *display_name*: String. A human-readable name of the Entity to be presented to the End-User.
+  - *description*: String. A human-readable brief description of this Entity presentable to the End-User.
   - *keywords*: JSON array with one or more strings representing search
   keywords, tags, categories, or labels that apply to this Entity.
   - *logo_uri*: String. A URL that points to the logo of this Entity.
@@ -236,6 +234,13 @@ Additional claims MAY be defined and used in conjunction with the claims above.
   ]
 }
 ```
+
+#  Claims Languages and Scripts
+
+Human-readable claim values and claim values that reference human-readable values MAY be represented in multiple languages and scripts. This specification enables such representations in the same manner as defined in Section 14 of OpenID Federation [@!OpenID.Federation] and Section 5.2 of OpenID Connect Core 1.0 [@!OpenID.Core].
+
+As described in OpenID Connect Core, to specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to member names, delimited by a `#` character. For example, `family_name#ja-Kana-JP` expresses the Family Name in Katakana in Japanese, which is commonly used to index and represent the phonetics of the Kanji representation of the same name represented as `family_name#ja-Hani-JP`. 
+
 
 # Implementation Considerations
 
