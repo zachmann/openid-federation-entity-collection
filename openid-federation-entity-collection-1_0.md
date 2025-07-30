@@ -114,9 +114,14 @@ parameter value. It is entirely up to the responder to define when an Entity
 matches the query.  
 If the responder does not support this feature, it SHOULD use the HTTP status code 400 and the content type `application/json`, with the error code `unsupported_parameter`.
 
--	**claims**: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
+-	**entity_claims**: (OPTIONAL) Array of claims to be included in the Entity Info Object included in the response for each collected Entity.  
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.  
-If this parameter is present and it is NOT an empty array, each JSON object that represents an Entity MUST include the requested claims if available.  
+If this parameter is present and it is NOT an empty array, each Entity Info Object that represents an Entity MUST include the requested claims unless a specific claim is not available for that Entity. Also Claims not present in the array MUST NOT be included in the Entity Info.  
+If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `unsupported_parameter`.
+
+-	**ui_claims**: (OPTIONAL) Array of claims to be included in the Entity Type UI Info Object included in the response for each returned Entity.  
+If this parameter is NOT present it is at the discretion of the responder which claims are included or not.  
+If this parameter is present and it is NOT an empty array, each Entity Type UI Info Object MUST include the requested claims unless a specific claim is not available for that Entity and Entity Type.  
 If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `unsupported_parameter`.
 
 
@@ -147,7 +152,7 @@ If the response is negative, it will be a JSON object and the content type MUST 
 The claims in the entity collection response are:
 
 - **entities**: (REQUIRED) Array of JSON objects, each representing an
-Federation Entity using the format described below. The list of Entities MUST
+Federation Entity as described in [Entity Info](#entity-info). The list of Entities MUST
 only contain Entities that are in line with the requested parameters. The
 responder MAY also filter down the list further at its own discretion.
 - **next_entity_id**: (OPTIONAL) Entity Identifier for the next element in the
@@ -157,7 +162,7 @@ additional results are available beyond those included in the `entities` array.
 
 Additional claims MAY be defined and used in conjunction with the claims above.
 
-#### Entity Object Parameters
+#### Entity Info
 
 Each JSON Object in the returned `entities` array MAY contain the following
 claims:
@@ -168,13 +173,30 @@ current record.
 present this claim MUST contain all Entity Type Identifiers of the subject's
 Entity the responder knows about.
 - **ui_infos**: (OPTIONAL) JSON Object containing information intended to be displayed to the user for each entity
-type. Each member name of the JSON object is an Entity Type Identifier and each
-value is a JSON Object as defined below.  
-If the request contains the `entity_type` parameter, the `ui_infos` Object MUST
-only contain Entity Types that are among the ones requested, with the exception
-of the `federation_entity` Entity Type, which MAY also appear if not requested.  
-Additional claims MAY be defined and used in conjunction
-with the following claims:
+type as described in [UI Infos](#ui-infos).  
+If the request contains the `entity_type` parameter, the UI Infos Object MUST
+only contain Entity Type Identifiers that are among the ones requested, with the exception
+of the `federation_entity` Entity Type Identifier, which MAY also appear if not explicitly requested.  
+
+- **trust_marks**: (OPTIONAL) Array of objects, each representing a Trust Mark,
+as defined in Section 3 of [@!OpenID.Federation].
+
+Additional claims MAY be defined and used in conjunction with the claims above.
+
+##### UI Infos
+
+UI Infos is a JSON Object containing UI-related information about a single
+Entity, but differentiated by its Entity Types.
+
+Each member name of the JSON object is an Entity Type Identifier and each
+value is an Entity Type UI Info Object as defined in [Entity Type UI Info](#entity-type-ui-info).  
+
+###### Entity Type UI Info
+
+Entity Type UI Info is a JSON Object containing UI-related information about a
+single Entity Type of an Entity.
+
+The following claims MAY be used:
 
   - *display_name*: String. A human-readable name of the Entity to be presented to the End-User.
   - *description*: String. A human-readable brief description of this Entity presentable to the End-User.
@@ -184,12 +206,7 @@ with the following claims:
   - *policy_uri*: String. A URL of the documentation of conditions and policies relevant to this Entity.
   - *information_uri*: String. A URL for documentation of additional information about this Entity viewable by the End-User.
   
-
-- **trust_marks**: (OPTIONAL) Array of objects, each representing a Trust Mark,
-as defined in Section 3 of [@!OpenID.Federation].
-
 Additional claims MAY be defined and used in conjunction with the claims above.
-
 
 #### Example Response
 
