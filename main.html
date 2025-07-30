@@ -1443,10 +1443,16 @@ matches the query.<br>
 If the responder does not support this feature, it SHOULD use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.7">
-              <p id="section-2.2.1-2.7.1"><strong>claims</strong>: (OPTIONAL) Array of claims to be included in the response for each returned Entity.
+              <p id="section-2.2.1-2.7.1"><strong>entity_claims</strong>: (OPTIONAL) Array of claims to be included in the Entity Info Object included in the response for each collected Entity.<br>
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.<br>
-If this parameter is present and it is NOT an empty array, each JSON object that represents an Entity MUST include the requested claims if available.<br>
+If this parameter is present and it is NOT an empty array, each Entity Info Object that represents an Entity MUST include the requested claims unless a specific claim is not available for that Entity. Also Claims not present in the array MUST NOT be included in the Entity Info.<br>
 If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.7.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-2.2.1-2.8">
+              <p id="section-2.2.1-2.8.1"><strong>ui_claims</strong>: (OPTIONAL) Array of claims to be included in the Entity Type UI Info Object included in the response for each returned Entity.<br>
+If this parameter is NOT present it is at the discretion of the responder which claims are included or not.<br>
+If this parameter is present and it is NOT an empty array, each Entity Type UI Info Object MUST include the requested claims unless a specific claim is not available for that Entity and Entity Type.<br>
+If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.8.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-2.2.1-3">When Client authentication is used, the request MUST be an HTTP request using the POST method, with the parameters passed in the POST body.<a href="#section-2.2.1-3" class="pilcrow">¶</a></p>
@@ -1491,7 +1497,7 @@ Host: openid.sunet.se
 <ul class="compact">
 <li class="compact" id="section-2.3.2-2.1">
               <strong>entities</strong>: (REQUIRED) Array of JSON objects, each representing an
-Federation Entity using the format described below. The list of Entities MUST
+Federation Entity as described in <a href="#entity-info">Entity Info</a>. The list of Entities MUST
 only contain Entities that are in line with the requested parameters. The
 responder MAY also filter down the list further at its own discretion.<a href="#section-2.3.2-2.1" class="pilcrow">¶</a>
 </li>
@@ -1505,10 +1511,10 @@ additional results are available beyond those included in the <code>entities</co
 </li>
           </ul>
 <p id="section-2.3.2-3">Additional claims MAY be defined and used in conjunction with the claims above.<a href="#section-2.3.2-3" class="pilcrow">¶</a></p>
-<div id="entity-object-parameters">
+<div id="entity-info">
 <section id="section-2.3.2.1">
-            <h5 id="name-entity-object-parameters">
-<a href="#section-2.3.2.1" class="section-number selfRef">2.3.2.1. </a><a href="#name-entity-object-parameters" class="section-name selfRef">Entity Object Parameters</a>
+            <h5 id="name-entity-info">
+<a href="#section-2.3.2.1" class="section-number selfRef">2.3.2.1. </a><a href="#name-entity-info" class="section-name selfRef">Entity Info</a>
             </h5>
 <p id="section-2.3.2.1-1">Each JSON Object in the returned <code>entities</code> array MAY contain the following
 claims:<a href="#section-2.3.2.1-1" class="pilcrow">¶</a></p>
@@ -1524,34 +1530,10 @@ Entity the responder knows about.<a href="#section-2.3.2.1-2.2" class="pilcrow">
 </li>
               <li class="normal" id="section-2.3.2.1-2.3">
                 <p id="section-2.3.2.1-2.3.1"><strong>ui_infos</strong>: (OPTIONAL) JSON Object containing information intended to be displayed to the user for each entity
-type. Each member name of the JSON object is an Entity Type Identifier and each
-value is a JSON Object as defined below.<br>
-If the request contains the <code>entity_type</code> parameter, the <code>ui_infos</code> Object MUST
-only contain Entity Types that are among the ones requested, with the exception
-of the <code>federation_entity</code> Entity Type, which MAY also appear if not requested.<br>
-Additional claims MAY be defined and used in conjunction
-with the following claims:<a href="#section-2.3.2.1-2.3.1" class="pilcrow">¶</a></p>
-<ul class="compact normal">
-<li class="compact normal" id="section-2.3.2.1-2.3.2.1">
-                    <em>display_name</em>: String. A human-readable name of the Entity to be presented to the End-User.<a href="#section-2.3.2.1-2.3.2.1" class="pilcrow">¶</a>
-</li>
-                  <li class="compact normal" id="section-2.3.2.1-2.3.2.2">
-                    <em>description</em>: String. A human-readable brief description of this Entity presentable to the End-User.<a href="#section-2.3.2.1-2.3.2.2" class="pilcrow">¶</a>
-</li>
-                  <li class="compact normal" id="section-2.3.2.1-2.3.2.3">
-                    <em>keywords</em>: JSON array with one or more strings representing search
-keywords, tags, categories, or labels that apply to this Entity.<a href="#section-2.3.2.1-2.3.2.3" class="pilcrow">¶</a>
-</li>
-                  <li class="compact normal" id="section-2.3.2.1-2.3.2.4">
-                    <em>logo_uri</em>: String. A URL that points to the logo of this Entity.<a href="#section-2.3.2.1-2.3.2.4" class="pilcrow">¶</a>
-</li>
-                  <li class="compact normal" id="section-2.3.2.1-2.3.2.5">
-                    <em>policy_uri</em>: String. A URL of the documentation of conditions and policies relevant to this Entity.<a href="#section-2.3.2.1-2.3.2.5" class="pilcrow">¶</a>
-</li>
-                  <li class="compact normal" id="section-2.3.2.1-2.3.2.6">
-                    <em>information_uri</em>: String. A URL for documentation of additional information about this Entity viewable by the End-User.<a href="#section-2.3.2.1-2.3.2.6" class="pilcrow">¶</a>
-</li>
-                </ul>
+type as described in <a href="#ui-infos">UI Infos</a>.<br>
+If the request contains the <code>entity_type</code> parameter, the UI Infos Object MUST
+only contain Entity Type Identifiers that are among the ones requested, with the exception
+of the <code>federation_entity</code> Entity Type Identifier, which MAY also appear if not explicitly requested.<a href="#section-2.3.2.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-2.3.2.1-2.4">
                 <p id="section-2.3.2.1-2.4.1"><strong>trust_marks</strong>: (OPTIONAL) Array of objects, each representing a Trust Mark,
@@ -1559,6 +1541,49 @@ as defined in Section 3 of <span>[<a href="#OpenID.Federation" class="cite xref"
 </li>
             </ul>
 <p id="section-2.3.2.1-3">Additional claims MAY be defined and used in conjunction with the claims above.<a href="#section-2.3.2.1-3" class="pilcrow">¶</a></p>
+<div id="ui-infos">
+<section id="section-2.3.2.1.1">
+              <h6 id="name-ui-infos">
+<a href="#section-2.3.2.1.1" class="section-number selfRef">2.3.2.1.1. </a><a href="#name-ui-infos" class="section-name selfRef">UI Infos</a>
+              </h6>
+<p id="section-2.3.2.1.1-1">UI Infos is a JSON Object containing UI-related information about a single
+Entity, but differentiated by its Entity Types.<a href="#section-2.3.2.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.3.2.1.1-2">Each member name of the JSON object is an Entity Type Identifier and each
+value is an Entity Type UI Info Object as defined in <a href="#entity-type-ui-info">Entity Type UI Info</a>.<a href="#section-2.3.2.1.1-2" class="pilcrow">¶</a></p>
+<div id="entity-type-ui-info">
+<section id="section-2.3.2.1.1.1">
+                <h6 id="name-entity-type-ui-info">
+<a href="#section-2.3.2.1.1.1" class="section-number selfRef">2.3.2.1.1.1. </a><a href="#name-entity-type-ui-info" class="section-name selfRef">Entity Type UI Info</a>
+                </h6>
+<p id="section-2.3.2.1.1.1-1">Entity Type UI Info is a JSON Object containing UI-related information about a
+single Entity Type of an Entity.<a href="#section-2.3.2.1.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.3.2.1.1.1-2">The following claims MAY be used:<a href="#section-2.3.2.1.1.1-2" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-2.3.2.1.1.1-3.1">
+                    <em>display_name</em>: String. A human-readable name of the Entity to be presented to the End-User.<a href="#section-2.3.2.1.1.1-3.1" class="pilcrow">¶</a>
+</li>
+                  <li class="compact" id="section-2.3.2.1.1.1-3.2">
+                    <em>description</em>: String. A human-readable brief description of this Entity presentable to the End-User.<a href="#section-2.3.2.1.1.1-3.2" class="pilcrow">¶</a>
+</li>
+                  <li class="compact" id="section-2.3.2.1.1.1-3.3">
+                    <em>keywords</em>: JSON array with one or more strings representing search
+keywords, tags, categories, or labels that apply to this Entity.<a href="#section-2.3.2.1.1.1-3.3" class="pilcrow">¶</a>
+</li>
+                  <li class="compact" id="section-2.3.2.1.1.1-3.4">
+                    <em>logo_uri</em>: String. A URL that points to the logo of this Entity.<a href="#section-2.3.2.1.1.1-3.4" class="pilcrow">¶</a>
+</li>
+                  <li class="compact" id="section-2.3.2.1.1.1-3.5">
+                    <em>policy_uri</em>: String. A URL of the documentation of conditions and policies relevant to this Entity.<a href="#section-2.3.2.1.1.1-3.5" class="pilcrow">¶</a>
+</li>
+                  <li class="compact" id="section-2.3.2.1.1.1-3.6">
+                    <em>information_uri</em>: String. A URL for documentation of additional information about this Entity viewable by the End-User.<a href="#section-2.3.2.1.1.1-3.6" class="pilcrow">¶</a>
+</li>
+                </ul>
+<p id="section-2.3.2.1.1.1-4">Additional claims MAY be defined and used in conjunction with the claims above.<a href="#section-2.3.2.1.1.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
 </section>
 </div>
 <div id="example-response">
