@@ -1205,7 +1205,7 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left"></td>
 <td class="center">openid-federation-entity-collection</td>
-<td class="right">July 2025</td>
+<td class="right">August 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Zachmann</td>
@@ -1220,7 +1220,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">individual</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-07-30" class="published">30 July 2025</time>
+<time datetime="2025-08-18" class="published">18 August 2025</time>
     </dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
@@ -1425,11 +1425,11 @@ If this parameter is not present the server MUST fall back on the upper limit.<b
 If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.3">
-              <p id="section-2.2.1-2.3.1"><strong>entity_type</strong>: (OPTIONAL) The value of this parameter is an Entity Type Identifier. The result MUST be filtered to include only those entities that include the specified Entity Type. When multiple <code>entity_type</code> parameters are present, for example <code>entity_type=openid_provider&amp;entity_type=openid_relying_party</code>, the result MUST be filtered to include all specified Entity Types.
+              <p id="section-2.2.1-2.3.1"><strong>entity_type</strong>: (OPTIONAL) The value of this parameter is an Entity Type Identifier. The result MUST be filtered to include only those entities that include the specified Entity Type. When multiple <code>entity_type</code> parameters are present, for example <code>entity_type=openid_provider&amp;entity_type=openid_relying_party</code>, the result MUST be filtered to include all Entities that include any of the specified Entity Types.
 If the responder does not support this feature, it MUST use the HTTP status code 400 and the content type <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.4">
-              <p id="section-2.2.1-2.4.1"><strong>trust_mark_type</strong>: (OPTIONAL) The value of this parameter is a Trust Mark Type Identifier. The list in the response is filtered to include only Entities that publish a Trust Mark with this Trust Mark Type in their Entity Configuration and is verified by the responder. The responder SHOULD verify the Trust Mark using the same Trust Anchor that is used to collect the Entities. When multiple <code>trust_mark_type</code> parameters are present, the result MUST be filtered to include all specified Trust Marks.<br>
+              <p id="section-2.2.1-2.4.1"><strong>trust_mark_type</strong>: (OPTIONAL) The value of this parameter is a Trust Mark Type Identifier. The result MUST be filtered to include only Entities that publish a Trust Mark of this Trust Mark Type in their Entity Configuration and that Trust Mark MUST be verified by the responder. The responder SHOULD verify the Trust Mark using the same Trust Anchor that is used to collect the Entities. When multiple <code>trust_mark_type</code> parameters are present, the result MUST be filtered to include only Entities that have a Trust Mark for all the specified Trust Mark Types.<br>
 If the responder does not support this feature, it MUST use the HTTP status code 400 and set the content type to <code>application/json</code>, with the error code <code>unsupported_parameter</code>.<a href="#section-2.2.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-2.2.1-2.5">
