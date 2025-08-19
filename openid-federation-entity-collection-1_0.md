@@ -11,7 +11,7 @@ value = "openid-federation-entity-collection"
 status = "standard"
 
 [[author]]
-initials="G.Z."
+initials="G."
 surname="Zachmann"
 fullname="Gabriel Zachmann"
 organization="Karlsruhe Institute of Technology"
@@ -22,13 +22,19 @@ organization="Karlsruhe Institute of Technology"
 
 .# Abstract
 
-This specification acts as an extension to the [@!OpenID.Federation]. It defines an additional federation endpoint to retrieve a filterable list of Entities in a (sub-)federation.
+This specification acts as an extension to [@!OpenID.Federation]. It defines an additional federation endpoint to retrieve a filterable list of Entities in a (sub-)federation.
 
 {mainmatter}
 
 # Introduction
 
-TODO
+This specification introduces a new federation endpoint that provides a
+filterable collection of Entities subordinate -- direct or indirect -- to a
+Trust Anchor. In contrast to the Subordinate Listing Endpoint of [@!OpenID.Federation],
+the entity collection does not only include direct subordinates.
+The response includes informational claims about the entities that MAY be used
+to build user interfaces to select one or multiple Entities, for example a login
+screen where End Users can select an OpenID Provider to login with.
 
 ## Requirements Notation and Conventions
 
@@ -55,7 +61,7 @@ Federation Entities publishing this endpoint SHOULD also publish a
 
 The location of the Federation Entity Collection Endpoint is published in the `federation_entity` metadata, using the `federation_collection_endpoint` parameter.
 
-The following is a non-normative example of an Entity Configuration payload, for an Trust Anchor that includes the `federation_collection_endpoint`:
+The following is a non-normative example of an Entity Configuration payload, for a Trust Anchor that includes the `federation_collection_endpoint`:
 
 ```json
 {
@@ -116,7 +122,7 @@ If the responder does not support this feature, it SHOULD use the HTTP status co
 
 -	**entity_claims**: (OPTIONAL) Array of claims to be included in the Entity Info Object included in the response for each collected Entity.  
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.  
-If this parameter is present and it is NOT an empty array, each Entity Info Object that represents an Entity MUST include the requested claims unless a specific claim is not available for that Entity. Also Claims not present in the array MUST NOT be included in the Entity Info.  
+If this parameter is present and it is NOT an empty array, each Entity Info Object that represents an Entity MUST include the requested claims unless a specific claim is not available for that Entity. Also Claims that are optional to return and not present in the array MUST NOT be included in the Entity Info.  
 If the responder does not support a requested claim, it MUST use the HTTP status code 400 and set the content type to `application/json`, with the error code `unsupported_parameter`.
 
 -	**ui_claims**: (OPTIONAL) Array of claims to be included in the Entity Type UI Info Object included in the response for each returned Entity.  
@@ -151,7 +157,7 @@ If the response is negative, it will be a JSON object and the content type MUST 
 
 The claims in the entity collection response are:
 
-- **entities**: (REQUIRED) Array of JSON objects, each representing an
+- **entities**: (REQUIRED) Array of JSON objects, each representing a
 Federation Entity as described in [Entity Info](#entity-info). The list of Entities MUST
 only contain Entities that are in line with the requested parameters. The
 responder MAY also filter down the list further at its own discretion.
@@ -258,11 +264,24 @@ Human-readable claim values and claim values that reference human-readable value
 
 As described in OpenID Connect Core, to specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to member names, delimited by a `#` character. For example, `family_name#ja-Kana-JP` expresses the Family Name in Katakana in Japanese, which is commonly used to index and represent the phonetics of the Kanji representation of the same name represented as `family_name#ja-Hani-JP`. 
 
+The following is an example of an Entity Type UI Info Object with claims
+represented in multiple languages:
+
+```json
+{
+  "description": "Karlsruhe Institute of Technology - The Research University in the Helmholtz Association",
+  "description#de": "Karlsruher Institut für Technologie - Die Forschungsuniversität in der Helmholtz-Gemeinschaft",
+  "description#en": "Karlsruhe Institute of Technology - The Research University in the Helmholtz Association",
+  "display_name": "Karlsruhe Institute of Technology (KIT)",
+  "display_name#de": "Karlsruher Institut für Technologie (KIT)",
+  "display_name#en": "Karlsruhe Institute of Technology (KIT)"
+}
+```
 
 # Implementation Considerations
 
-## Mapping Entity Configuration Claims to Entity Response Claims 
-It is up to the implementation to decide how the responded `ui_infos` claims about an entity are
+## Mapping Entity Configuration Claims to UI Info Response Claims 
+It is up to the implementation to decide how the claims of UI Info Objects in the response are
 populated. Implementations SHOULD consider the information published by entities
 in their Entity Configuration and MAY consider additional information.
 
@@ -291,10 +310,6 @@ such as, but not limited to:
   - Only Entities that are resolvable at the Resolve Endpoint of the Entity
   providing the Entity Collection Endpoint.
 
-
-# Privacy Considerations
-
-TODO
 
 # Security Considerations
 
@@ -418,4 +433,3 @@ and the Geant Trust & Identity Incubator of Geant5-2.
 -00
 
 * Initial version, fixing OpenID Federation issue #56.
-- `information_uri`: The `information_uri` Claim is a common Metadata Claim useable with all Entity Types.
