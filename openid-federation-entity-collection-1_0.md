@@ -85,7 +85,7 @@ The following is a non-normative example of an Entity Configuration payload, for
       "federation_fetch_endpoint": "https://ta.example.org/fetch",
       "federation_list_endpoint": "https://ta.example.org/list",
       "federation_resolve_endpoint": "https://ta.example.org/resolve",
-      "federation_collection_endpoint": "https://ta.example.org/entities"
+      "federation_collection_endpoint": "https://ta.example.org/collect"
     }
   }
 }
