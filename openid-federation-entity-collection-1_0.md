@@ -28,13 +28,50 @@ This specification acts as an extension to [@!OpenID.Federation]. It defines an 
 
 # Introduction
 
-This specification introduces a new federation endpoint that provides a
-filterable collection of Entities subordinate -- direct or indirect -- to a
-Trust Anchor. In contrast to the Subordinate Listing Endpoint of [@!OpenID.Federation],
-the entity collection does not only include direct subordinates.
-The response includes informational claims about the entities that MAY be used
-to build user interfaces to select one or multiple Entities, for example a login
-screen where End Users can select an OpenID Provider to login with.
+This specification introduces a new federation endpoint that provides a single, queryable
+interface for discovering Entities within a federation subtree anchored at a
+Trust Anchor. In contrast to the Subordinate Listing Endpoint defined in
+ [@!OpenID.Federation], which enumerates only direct subordinates, this endpoint
+enables discovery of Entities that are subordinate either directly or
+indirectly to the selected Trust Anchor.
+
+The endpoint is intended to support discovery and selection use cases in which
+a client presents a curated set of Entities to end users or administrators.
+Examples include selection interfaces (for example, login pickers) and
+administrative views. To support such use cases, responses MAY include user
+interface–oriented information (for example, display names, logos, and
+descriptions) and the endpoint MAY support filtering (for example, by entity
+type, trust mark type, or query text), as defined in this specification.
+
+Information returned by this endpoint is informational. It is intended to
+facilitate presentation and efficient narrowing of the result set. It does not
+replace trust validation. When an Entity is to be relied upon, trust validation
+MUST be performed according to OpenID Federation.
+
+## Rationale and Benefits
+
+This specification complements the federation core functionality by providing
+an endpoint optimized for discovery, filtering, and presentation of federation
+entities at scale. The following benefits motivate implementation:
+
+- Coverage beyond direct subordinates: Enables discovery across multiple
+  federation levels without requiring clients to recursively traverse
+  intermediates.
+- UI-oriented metadata: Supports inclusion of human-readable attributes (for
+  example, display name, description, logo URI, policy URI) to directly power
+  selection and catalog views without separate metadata lookups.
+- Server-side filtering: Allows responders to filter by entity type, trust mark
+  type, and free-form query, reducing client-side processing and network
+  round-trips.
+- Pagination and incremental retrieval: Supports efficient list pagination using
+  `from_entity_id` and `limit`, suitable for large federations.
+- Reduced coupling to resolution: Provides a lightweight, list-oriented surface
+  distinct from the Resolve and Fetch flows, allowing clients to defer
+  resolution and full trust validation until a concrete Entity is selected.
+
+These properties enable relying parties, portals, and administrative tools to
+implement consistent, efficient, and user-friendly discovery experiences while
+preserving the core trust validation model defined by OpenID Federation.
 
 ## Requirements Notation and Conventions
 
@@ -319,7 +356,7 @@ OpenID Federation 1.0 [@!OpenID.Federation] apply to this specification.
 ## Unsigned Response
 
 The response from the Entity Collection Endpoint is not signed and the obtained
-information should only be considered as informational.
+information MUST be considered as informational.
 To verify an Entity proper trust validation according to OpenID Federation 1.0 [@!OpenID.Federation]
 still MUST be done.
 
