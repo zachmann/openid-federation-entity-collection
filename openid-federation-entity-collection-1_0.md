@@ -317,6 +317,15 @@ represented in multiple languages:
 
 # Implementation Considerations
 
+## Collecting Entities
+It is up to the implementation to decide how entities are collected.
+A general and straightforward approach is described in section 17.2.2 of [@!OpenID.Federation]. 
+Implementations MAY use other approaches to collect entities. Those MAY also be based
+on additional information available to the responder. An example could be when the
+entity collection response should only include entities with a certain Trust
+Mark which is issued by the same Entity that provides the Entity Collection
+Endpoint.
+
 ## Mapping Entity Configuration Claims to UI Info Response Claims 
 It is up to the implementation to decide how the claims of UI Info Objects in the response are
 populated. Implementations SHOULD consider the information published by entities
