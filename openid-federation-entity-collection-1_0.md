@@ -239,17 +239,9 @@ value is an Entity Type UI Info Object as defined in [Entity Type UI Info](#enti
 Entity Type UI Info is a JSON Object containing UI-related information about a
 single Entity Type of an Entity.
 
-The following claims MAY be used:
-
-  - *display_name*: String. A human-readable name of the Entity to be presented to the End-User.
-  - *description*: String. A human-readable brief description of this Entity presentable to the End-User.
-  - *keywords*: JSON array with one or more strings representing search
-  keywords, tags, categories, or labels that apply to this Entity.
-  - *logo_uri*: String. A URL that points to the logo of this Entity.
-  - *policy_uri*: String. A URL of the documentation of conditions and policies relevant to this Entity.
-  - *information_uri*: String. A URL for documentation of additional information about this Entity viewable by the End-User.
-  
-Additional claims MAY be defined and used in conjunction with the claims above.
+All Claims specified in section 5.2.2 "Informational Metadata Extensions" of [@!OpenID.Federation] MAY be used.
+ 
+Additional Claims MAY be defined and used in conjunction with the Claims above.
 
 #### Example Response
 
