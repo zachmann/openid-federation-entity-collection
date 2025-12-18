@@ -94,6 +94,15 @@ The Federation Entity Collection Endpoint is an optional endpoint that MAY be pu
 Federation Entities publishing this endpoint SHOULD also publish a
 `federation_resolve_endpoint`.
 
+## Pagination
+The endpoint supports a pagination mechanism that is in line with the pagination
+mechanism of the [@!OpenID.FederationExtendedSubordinateListing]. All
+consideration of section 3.1 of [@!OpenID.FederationExtendedSubordinateListing]
+apply, in particular it is noted that a responder implementing pagination MUST ensure consistent
+ordering is implemented across all returned responses. No recommendation is made
+on which key the ordering is based upon and is left up to the choice of
+implementations.
+
 ## Endpoint Location
 
 The location of the Federation Entity Collection Endpoint is published in the `federation_entity` metadata, using the `federation_collection_endpoint` parameter.
@@ -412,6 +421,25 @@ and clients MUST consider them as not yet verified.
             <organization>Connect2id</organization>
         </author>
         <date day="24" month="October" year="2024"/>
+    </front>
+</reference>
+
+<reference anchor="OpenID.FederationExtendedSubordinateListing" target="https://openid.net/specs/openid-federation-extended-listing-1_0.html">
+    <front>
+        <title>OpenID Federation Extended Subordinate Listing 1.0</title>
+        <author fullname="Giuseppe De Marco">
+            <organization>Dipartimento per la trasformazione digitale</organization>
+        </author>
+        <author fullname="Michael Fraser">
+            <organization>Raidiam</organization>
+        </author>
+        <author fullname="Łukasz Jaromin">
+            <organization>Raidiam</organization>
+        </author>
+        <author fullname="Michael B. Jones">
+            <organization>Self-Issued Consulting</organization>
+        </author>
+        <date day="27" month="April" year="2025"/>
     </front>
 </reference>
 
