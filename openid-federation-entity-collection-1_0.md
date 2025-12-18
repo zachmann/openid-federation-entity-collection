@@ -88,13 +88,13 @@ This specification uses the terms
 and "Trust Mark", "Federation Entity", "Federation Entity Key", "Trust Anchor",
 "Intermediate", and "Subordinate Statement" defined in [@!OpenID.Federation].
 
-## Endpoint Description
+# Entity Collection Endpoint
 
 The Federation Entity Collection Endpoint is an optional endpoint that MAY be published by Federation Entities. It MUST use the `https` scheme and MAY include port, path, and query parameter components encoded in `application/x-www-form-urlencoded` format. It MUST NOT contain a fragment component.
 Federation Entities publishing this endpoint SHOULD also publish a
 `federation_resolve_endpoint`.
 
-### Endpoint Location
+## Endpoint Location
 
 The location of the Federation Entity Collection Endpoint is published in the `federation_entity` metadata, using the `federation_collection_endpoint` parameter.
 
