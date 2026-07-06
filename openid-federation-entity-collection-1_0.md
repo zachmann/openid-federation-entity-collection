@@ -147,7 +147,7 @@ The following is a non-normative example of an Entity Configuration payload, for
 
 ### Request Format
 
-When client authentication is not used, the request to the `federation_collection_endpoint` MUST be an HTTP request using the GET method with the following query parameters, encoded in `application/x-www-form-urlencoded` format:
+When client authentication is not used, the request to the `federation_collection_endpoint` MUST be an HTTP request using either the GET or POST method with the following parameters, encoded in `application/x-www-form-urlencoded` format. For GET requests, parameters are sent as query parameters. For POST requests, parameters are sent in the request body, and the Content-Type header MUST be set to application/x-www-form-urlencoded.
 
 - **from**: (OPTIONAL) If this parameter is present, the resulting list MUST be the subset of the overall ordered response starting from this pointer. This parameter MUST be copied from the `next` response parameter of a previous request.
   If the pointer in this parameter is not or not longer known to the responder, it MUST return an error response with the error code `page_not_found` as defined in [Error Response Format](#error-response-format).  
@@ -190,11 +190,20 @@ When Client authentication is used, the request MUST be an HTTP request using th
 
 #### Example Request
 
-The following is a non-normative example of a collection request:
+The following are non-normative examples of collection requests:
 
 ```http
 GET /collection?entity_type=openid_provider&trust_mark_type=https%3A%2F%2Frp%2Erefeds.org%2Fsitfi&trust_anchor=https%3A%2F%2Fswamid.se HTTP/1.1
 Host: openid.sunet.se
+```
+
+```http
+POST /collection HTTP/1.1
+Host: openid.sunet.se
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 138
+
+entity_type=openid_provider&trust_mark_type=https%3A%2F%2Frp%2Erefeds.org%2Fsitfi&trust_anchor=https%3A%2F%2Fswamid.se
 ```
 
 ## Entity Collection Response
@@ -631,6 +640,7 @@ and the Geant Trust & Identity Incubator of Geant5-2.
 * Added references to Entity Info and Entity Type UI Info sections in `entity_claims` and `ui_claims` parameter descriptions.
 * Added `unsupported_claim` error code for unsupported claims in `entity_claims` and `ui_claims` parameters.
 * Added examples demonstrating `entity_claims` and `ui_claims` parameter usage.
+* Added support for HTTP POST method for unauthenticated clients.
 * Clarified error response if trust_anchor value is not supported.
 * Clarified the `limit` parameter description by adding a reference to the [Response Limits](#response-limits) section.
 
