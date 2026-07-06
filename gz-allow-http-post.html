@@ -1205,7 +1205,7 @@ li > p:last-of-type:only-child {
 <thead><tr>
 <td class="left"></td>
 <td class="center">openid-federation-entity-collection</td>
-<td class="right">May 2026</td>
+<td class="right">July 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Zachmann</td>
@@ -1220,7 +1220,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">OpenID Connect Working Group</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-07" class="published">7 May 2026</time>
+<time datetime="2026-07-06" class="published">6 July 2026</time>
     </dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
@@ -1518,7 +1518,7 @@ No recommendation is made on which key the ordering is based upon and is left up
           <h4 id="name-request-format">
 <a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-request-format" class="section-name selfRef">Request Format</a>
           </h4>
-<p id="section-3.3.1-1">When client authentication is not used, the request to the <code>federation_collection_endpoint</code> MUST be an HTTP request using either the GET or POST method with the following parameters, encoded in <code>application/x-www-form-urlencoded</code> format. For GET requests, parameters are sent as query parameters. For POST requests, parameters are sent in the request body.<a href="#section-3.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.1-1">When client authentication is not used, the request to the <code>federation_collection_endpoint</code> MUST be an HTTP request using either the GET or POST method with the following parameters, encoded in <code>application/x-www-form-urlencoded</code> format. For GET requests, parameters are sent as query parameters. For POST requests, parameters are sent in the request body, and the Content-Type header MUST be set to application/x-www-form-urlencoded.<a href="#section-3.3.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3.3.1-2.1">
               <p id="section-3.3.1-2.1.1"><strong>from</strong>: (OPTIONAL) If this parameter is present, the resulting list MUST be the subset of the overall ordered response starting from this pointer. This parameter MUST be copied from the <code>next</code> response parameter of a previous request.
