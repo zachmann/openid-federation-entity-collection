@@ -184,7 +184,8 @@ If this parameter is present, each Entity Type UI Info Object MUST include the r
 If the responder does not support this feature, it MUST return an error response with the error code `unsupported_parameter` as defined in [Error Response Format](#error-response-format).  
 If the responder does not support a requested claim, it MUST return an error response with the error code `unsupported_claim` as defined in [Error Response Format](#error-response-format).
 
-
+- **language_tag**: (OPTIONAL) A language tag according to BCP47 [@!RFC5646]. If provided, UI claims in the response MUST be filtered to include only this language. The default/untagged value (empty language tag) MUST always be included regardless of this parameter. If not provided, all available languages MUST be included. When multiple `language_tag` parameters are present, for example `language_tag=en&language_tag=de`, the result MUST include all language-tagged values matching any of the specified language tags. Language tag matching MUST follow [@!RFC4647] basic filtering semantics, where a parent tag matches more specific subtags (for example, "en" matches "en-US").  
+If the responder does not support this feature, it MUST return an error response with the error code `unsupported_parameter` as defined in [Error Response Format](#error-response-format).
 
 When Client authentication is used, the request MUST be an HTTP request using the POST method, with the parameters passed in the POST body.
 
@@ -636,6 +637,7 @@ and the Geant Trust & Identity Incubator of Geant5-2.
 
 -01
 
+* Added the `language_tag` request parameter to enable clients to filter UI claims by preferred languages (Issue #38).
 * Clarified the description of the `last_updated` response field to specify that it refers to when the responder last traversed or refreshed its federation entity collection.
 * Added references to Entity Info and Entity Type UI Info sections in `entity_claims` and `ui_claims` parameter descriptions.
 * Added `unsupported_claim` error code for unsupported claims in `entity_claims` and `ui_claims` parameters.
