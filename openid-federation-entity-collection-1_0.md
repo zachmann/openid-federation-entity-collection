@@ -147,7 +147,7 @@ The following is a non-normative example of an Entity Configuration payload, for
 
 ### Request Format
 
-When client authentication is not used, the request to the `federation_collection_endpoint` MUST be an HTTP request using either the GET or POST method with the following parameters, encoded in `application/x-www-form-urlencoded` format. For GET requests, parameters are sent as query parameters. For POST requests, parameters are sent in the request body.
+When client authentication is not used, the request to the `federation_collection_endpoint` MUST be an HTTP request using either the GET or POST method with the following parameters, encoded in `application/x-www-form-urlencoded` format. For GET requests, parameters are sent as query parameters. For POST requests, parameters are sent in the request body, and the Content-Type header MUST be set to application/x-www-form-urlencoded.
 
 - **from**: (OPTIONAL) If this parameter is present, the resulting list MUST be the subset of the overall ordered response starting from this pointer. This parameter MUST be copied from the `next` response parameter of a previous request.
   If the pointer in this parameter is not or not longer known to the responder, it MUST return an error response with the error code `page_not_found` as defined in [Error Response Format](#error-response-format).  
