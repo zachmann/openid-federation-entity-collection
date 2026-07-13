@@ -178,9 +178,9 @@ If this parameter is present, each Entity Info Object that represents an Entity 
 If the responder does not support this feature, it MUST return an error response with the error code `unsupported_parameter` as defined in [Error Response Format](#error-response-format).  
 If the responder does not support a requested claim, it MUST return an error response with the error code `unsupported_claim` as defined in [Error Response Format](#error-response-format).
 
--	**ui_claims**: (OPTIONAL) Claims to be included in the Entity Type UI Info Object included in the response for each returned Entity. All claims defined in [Entity Type UI Info](#entity-type-ui-info) MAY be requested. This parameter can be specified multiple times to request multiple claims.  
+-	**info_claims**: (OPTIONAL) Claims to be included in the Entity Type Info Object included in the response for each returned Entity. All claims defined in [Entity Type Info](#entity-type-info) MAY be requested. This parameter can be specified multiple times to request multiple claims.  
 If this parameter is NOT present it is at the discretion of the responder which claims are included or not.  
-If this parameter is present, each Entity Type UI Info Object MUST include the requested claims unless a specific claim is not available for that Entity and Entity Type. Claims that are optional to return and not specified MUST NOT be included in the Entity Type UI Info.  
+If this parameter is present, each Entity Type Info Object MUST include the requested claims unless a specific claim is not available for that Entity and Entity Type. Claims that are optional to return and not specified MUST NOT be included in the Entity Type Info.  
 If the responder does not support this feature, it MUST return an error response with the error code `unsupported_parameter` as defined in [Error Response Format](#error-response-format).  
 If the responder does not support a requested claim, it MUST return an error response with the error code `unsupported_claim` as defined in [Error Response Format](#error-response-format).
 
@@ -236,9 +236,9 @@ current record.
 - **entity_types**: (RECOMMENDED) Array of string Entity Type Identifiers. If
 present this claim MUST contain all Entity Type Identifiers of the subject's
 Entity the responder knows about.
-- **ui_infos**: (OPTIONAL) JSON Object containing information intended to be displayed to the user for each entity
-type as described in [UI Infos](#ui-infos).  
-If the request contains the `entity_type` parameter, the UI Infos Object MUST
+- **entity_infos**: (OPTIONAL) JSON Object containing information intended to be displayed to the user for each entity
+type as described in [Entity Infos](#entity-infos).  
+If the request contains the `entity_type` parameter, the Entity Infos Object MUST
 only contain Entity Type Identifiers that are among the ones requested, with the exception
 of the `federation_entity` Entity Type Identifier, which MAY also appear if not explicitly requested.  
 
@@ -247,17 +247,17 @@ as defined in Section 3 of [@!OpenID.Federation].
 
 Additional claims MAY be defined and used in conjunction with the claims above.
 
-##### UI Infos
+##### Entity Infos
 
-UI Infos is a JSON Object containing UI-related information about a single
+Entity Infos is a JSON Object containing informational claims about a single
 Entity, but differentiated by its Entity Types.
 
 Each member name of the JSON object is an Entity Type Identifier and each
-value is an Entity Type UI Info Object as defined in [Entity Type UI Info](#entity-type-ui-info).  
+value is an Entity Type Info Object as defined in [Entity Type Info](#entity-type-info).  
 
-###### Entity Type UI Info
+###### Entity Type Info
 
-Entity Type UI Info is a JSON Object containing UI-related information about a
+Entity Type Info is a JSON Object containing informational claims about a
 single Entity Type of an Entity.
 
 All Claims specified in section 5.2.2 "Informational Metadata Extensions" of [@!OpenID.Federation] MAY be used.
@@ -274,7 +274,7 @@ Additional Claims MAY be defined and used in conjunction with the Claims above.
       "entity_types": [
         "federation_entity"
       ],
-      "ui_infos": {
+      "entity_infos": {
         "federation_entity": {
           "display_name": "The green organization",
           "logo_uri": "https://green.example.com/logo.png"
@@ -287,7 +287,7 @@ Additional Claims MAY be defined and used in conjunction with the Claims above.
         "openid_relying_party",
         "federation_entity"
       ],
-      "ui_infos": {
+      "entity_infos": {
         "federation_entity": {
           "display_name": "Red Organization",
           "logo_uri": "https://red.example.com/logo.png"
@@ -318,7 +318,7 @@ If the request was malformed or an error occurred during the processing of the r
      <br/>
       In addition the following error codes defined by this specification MAY be used:
   - **page_not_found**: The pagination pointer provided in the `from` parameter is not or no longer known to the responder. The HTTP response status code SHOULD be 404 (Not Found).
-  - **unsupported_claim**: The server does not support a specific requested claim in the `entity_claims` or `ui_claims` parameter. The HTTP response status code SHOULD be 400 (Bad Request).  
+  - **unsupported_claim**: The server does not support a specific requested claim in the `entity_claims` or `info_claims` parameter. The HTTP response status code SHOULD be 400 (Bad Request).  
   - **invalid_trust_anchor**: The Trust Anchor cannot be found or used. The HTTP response status code SHOULD be 404 (Not Found).
 - **error_description**: (REQUIRED) Human-readable text providing additional information used to assist the developer in understanding the error that occurred.
 
@@ -376,18 +376,18 @@ The following is a non-normative example of a response to the request above, sho
 }
 ```
 
-### Example Request with `ui_claims`
+### Example Request with `info_claims`
 
-The following is a non-normative example of a collection request with the `ui_claims` parameter specified multiple times:
+The following is a non-normative example of a collection request with the `info_claims` parameter specified multiple times:
 
 ```http
-GET /collection?entity_type=openid_provider&ui_claims=display_name&ui_claims=logo_uri HTTP/1.1
+GET /collection?entity_type=openid_provider&info_claims=display_name&info_claims=logo_uri HTTP/1.1
 Host: openid.sunet.se
 ```
 
-### Example Response with `ui_claims`
+### Example Response with `info_claims`
 
-The following is a non-normative example of a response to the request above, showing only the requested UI claims in each Entity Info Object:
+The following is a non-normative example of a response to the request above, showing only the requested claims in each Entity Info Object:
 
 ```json
 {
@@ -397,7 +397,7 @@ The following is a non-normative example of a response to the request above, sho
       "entity_types": [
         "openid_provider"
       ],
-      "ui_infos": {
+      "entity_infos": {
         "openid_provider": {
           "display_name": "Example University OP",
           "logo_uri": "https://op1.example.com/logo.png"
@@ -409,7 +409,7 @@ The following is a non-normative example of a response to the request above, sho
       "entity_types": [
         "openid_provider"
       ],
-      "ui_infos": {
+      "entity_infos": {
         "openid_provider": {
           "display_name": "Another University OP",
           "logo_uri": "https://op2.example.com/logo.png"
@@ -426,7 +426,7 @@ Human-readable claim values and claim values that reference human-readable value
 
 As described in OpenID Connect Core, to specify the languages and scripts, BCP47 [@!RFC5646] language tags are added to member names, delimited by a `#` character. For example, `family_name#ja-Kana-JP` expresses the Family Name in Katakana in Japanese, which is commonly used to index and represent the phonetics of the Kanji representation of the same name represented as `family_name#ja-Hani-JP`. 
 
-The following is an example of an Entity Type UI Info Object with claims
+The following is an example of an Entity Type Info Object with claims
 represented in multiple languages:
 
 ```json
@@ -451,12 +451,12 @@ entity collection response should only include entities with a certain Trust
 Mark which is issued by the same Entity that provides the Entity Collection
 Endpoint.
 
-## Mapping Entity Configuration Claims to UI Info Response Claims 
-It is up to the implementation to decide how the claims of UI Info Objects in the response are
+## Mapping Entity Configuration Claims to Entity Info Response Claims 
+It is up to the implementation to decide how the claims of Entity Info Objects in the response are
 populated. Implementations SHOULD consider the information published by entities
 in their Entity Configuration and MAY consider additional information.
 
-The following mapping between Claims in the `ui_infos` response Claim and Metadata Claims in the
+The following mapping between Claims in the `entity_infos` response Claim and Metadata Claims in the
 Entity Configuration SHOULD be considered:
 
 - `display_name`: The `display_name` Claim is a common Metadata Claim useable with all Entity Types. If set it SHOULD be copied to the response. If the `display_name` Claim is not set other Claims MAY be considered, such as:
@@ -643,6 +643,7 @@ and the Geant Trust & Identity Incubator of Geant5-2.
 * Added support for HTTP POST method for unauthenticated clients.
 * Clarified error response if trust_anchor value is not supported.
 * Clarified the `limit` parameter description by adding a reference to the [Response Limits](#response-limits) section.
+* Renamed the `ui_infos` response claim to `entity_infos` and the `ui_claims` request parameter to `info_claims`.
 
 -00
 
